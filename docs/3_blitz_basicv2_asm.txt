@@ -1,0 +1,172 @@
+	.word $4b05
+	* = $4b05
+
+; PROBABLY a kind of CHRGET
+l4b05	lda #$00    ; SYSM%
+	.byt $2c    ; bit $xxxx
+	lda #$80    ; SYSM%+3
+	sta $24
+	ldy #$2d    ; Z$1
+	lda ($2d),y
+	sta $22
+	iny
+	lda ($2d),y
+	sta $23
+	lda #$00
+	ldy #$17    ; C2% Hi
+	sta ($2d),y
+	iny
+	sta ($2d),y
+	ldy #$1e    ; C3% Hi
+	sta ($2d),y
+	iny
+	sta ($2d),y
+l4b27	ldy #$11    ; C1% Lo
+	lda ($2d),y
+	clc
+	adc #$01
+	sta ($2d),y
+	ldy #$26    ; C4% Lo
+	cmp ($2d),y
+	bcc l4b47
+l4b36	lda #$00
+	ldy #$0a    ; C% Lo
+	sta ($2d),y
+	lda #$01
+	ldy #$18    ; C2% Lo
+	sta ($2d),y
+l4b42	ldy #$1f    ; C3% Lo
+	sta ($2d),y
+	rts
+
+l4b47	tay
+	lda ($22),y
+	bit $24
+	bmi l4b52
+l4b4e	cmp #$20
+	beq l4b27
+l4b52	ldy #$0a    ; C% Lo
+	sta ($2d),y
+	cmp #$3a
+	beq l4b42
+l4b5a	rts
+
+
+; PROBABLY reading the next basic line into Z$ buffer
+l4b5b	lda #$00    ; SYSM%+86
+	ldy #$25    ; C4% Hi
+	sta ($2d),y
+	iny         ; C4% Lo
+	sta ($2d),y
+	ldy #$2d    ; Z$1
+	lda ($2d),y
+	sta $22
+	iny
+	lda ($2d),y
+	sta $23
+	ldx #$02
+	jsr $ffc6
+	ldy #$00
+	sty $90
+l4b78	jsr $ffe4
+	sta ($22),y
+	bne l4b87
+l4b7f	cpy #$01
+	beq l4b8f
+l4b83	cpy #$04
+	bcs l4b8a
+l4b87	iny
+	bne l4b78
+l4b8a	tya
+	ldy #$26    ; C4% Lo
+	sta ($2d),y
+l4b8f	jmp $ffcc
+
+
+; SYSN%
+; Checking if a value is already contained in an integer array.
+; C5% = array to search
+; This routine has been modified for usage from BASIC V2
+;   C5% is now offset of array to search, seen from ARYTAB ($2F/$30)
+;   In compiled Blitz, C5% was index into its internal array of arrays
+; C6% value to search for
+; C7% number of entries so far
+; return index in C5% or <0 if not found
+l4b92	ldy #$34    ; C5% Lo
+	lda ($2d),y
+        clc
+        adc $2f
+        sta $5f
+        dey
+        lda ($2d),y ; C5% Hi
+        adc $30
+        sta $60
+        lda #$ff
+        sta ($2d),y
+        nop
+	nop
+	nop
+	nop
+
+	ldy #$41    ; C7% Hi
+	lda ($2d),y
+	sta $25
+	iny         ; C7% Lo
+	lda ($2d),y
+	sta $24
+	ldy #$3a    ; C6% Hi
+	lda ($2d),y
+	sta $26
+	iny         ; C6% Lo
+	lda ($2d),y
+	sta $27
+	ldy #$00
+	sty $22
+	sty $23
+	lda #$07   ; skip array header
+	.byt $2c   ; bit $xxxx
+l4bc9   lda #$02   ; skip to next element in array
+	clc
+	adc $5f
+	sta $5f
+	bcc l4bd4
+l4bd2	inc $60
+l4bd4	lda $26
+	cmp ($5f),y ; id (hi) found?
+	beq l4bed   ; yes, check id (lo)
+l4bda	inc $22     ; no, go to next element
+	bne l4be0
+l4bde	inc $23    ; inc current array index
+l4be0	lda $23
+	cmp $25    ; at end of array (hi)?
+	bne l4bc9  ; no, continue
+l4be6	lda $22
+	cmp $24    ; at end of array (lo)?
+	bne l4bc9  ; no, continue
+l4bec	rts
+l4bed	iny
+	lda ($5f),y
+	dey
+	cmp $27
+	bne l4bda
+l4bf5	ldy #$33    ; C5% Hi
+	lda $23
+	sta ($2d),y
+	iny         ; C5% Lo
+	lda $22
+	sta ($2d),y
+	rts
+
+l4c01	ldx #$02    ; SYSN1%
+	jsr $ffc6
+	jsr $ffe4
+	ldy #$11    ; C1% Lo
+	sta ($2d),y
+	jmp $ffcc
+
+l4c10	ldx #$03    ; SYSN2%
+	jsr $ffc9
+	ldy #$11    ; C1% Lo
+	lda ($2d),y
+	jsr $ffd2
+	jmp $ffcc

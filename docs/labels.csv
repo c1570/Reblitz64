@@ -5,13 +5,13 @@ var,A2$,
 var,A5$,
 var,B%(,
 var,B$,
-var,B1,current BASIC input line number
+var,B1,current BASIC input line number (as given in input program)
 var,B1$,
 var,B2%,
 var,B3%,
 var,B4,
-var,B5%,
-var,C%(,
+var,B5%,current consecutive BASIC line number (0, 1, 2, ...)
+var,C%(,consecutive input line number to p-code offset
 var,C%,current BASIC token
 var,C,
 var,C1%,
@@ -22,7 +22,7 @@ var,C4%,
 var,C5%,current BASIC token (MSB unset)
 var,C6%,
 var,C7%,
-var,D%(,
+var,D%(,consecutive input line number to actual input BASIC line number (in signed int)
 var,E%,length of p-code
 var,E$,tmp string
 var,E1$,

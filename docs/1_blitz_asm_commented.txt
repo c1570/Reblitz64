@@ -85,9 +85,10 @@ l4b8f	jmp $ffcc
 
 ; SYSN%
 ; Checking if a value is already contained in an integer array.
-; C5% lo = array to search - 9 is first array - 11: D%(), 13: G%(), 15: H%()
+; This uses the Blitz internal array of arrays and does not work from BASIC V2.
+; C5% lo = array to search - 9 is first array - 11 is D%(), 13 is G%(), 15 is H%()
 ; C6% value
-; C7% number of entries so far - for D%(): B5%, for G%(): G, for H%(): H
+; C7% number of entries so far - for D%() B5%, for G%() G, for H%() H
 ; return index in C5% or <0 if not found
 l4b92	lda #$ff
 	ldy #$33    ; C5% Hi
