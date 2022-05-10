@@ -1,62 +1,68 @@
 	.word $4b05
 	* = $4b05
 
-; PROBABLY a kind of CHRGET
-l4b05	lda #$00    ; SYSM%
+; CHRGET variant
+; reads from Z$ buffer (one BASIC line)
+; outputs byte to C% (0 if buffer empty), C2% = 1 at end of buffer, C3% = $1F at end of instruction
+; C1% is current offset in buffer
+; C4% is length of buffer
+l4b05	lda #$00    ; SYSM%    - skip spaces
 	.byt $2c    ; bit $xxxx
-	lda #$80    ; SYSM%+3
+	lda #$80    ; SYSM%+3  - do not skip spaces
 	sta $24
-	ldy #$2d    ; Z$1
+	ldy #$2d    ; get Z$ pointer into $22/$23
 	lda ($2d),y
 	sta $22
 	iny
 	lda ($2d),y
 	sta $23
-	lda #$00
-	ldy #$17    ; C2% Hi
+	lda #$00    ; C2% = 0
+	ldy #$17
 	sta ($2d),y
 	iny
 	sta ($2d),y
-	ldy #$1e    ; C3% Hi
+	ldy #$1e    ; C3% = 0
 	sta ($2d),y
 	iny
 	sta ($2d),y
-l4b27	ldy #$11    ; C1% Lo
+l4b27	ldy #$11    ; C1%
 	lda ($2d),y
 	clc
 	adc #$01
 	sta ($2d),y
-	ldy #$26    ; C4% Lo
+	ldy #$26    ; C4%
 	cmp ($2d),y
-	bcc l4b47
-l4b36	lda #$00
-	ldy #$0a    ; C% Lo
+	bcc l4b47   ; branch if not at end of buffer yet
+
+l4b36	lda #$00    ; at end of buffer
+	ldy #$0a    ; C% = 0
 	sta ($2d),y
 	lda #$01
-	ldy #$18    ; C2% Lo
+	ldy #$18    ; C2% = 1
 	sta ($2d),y
-l4b42	ldy #$1f    ; C3% Lo
+l4b42	ldy #$1f    ; C3% = $1F
 	sta ($2d),y
 	rts
 
 l4b47	tay
-	lda ($22),y
+	lda ($22),y ; read byte
 	bit $24
 	bmi l4b52
-l4b4e	cmp #$20
+l4b4e	cmp #$20    ; ignore spaces
 	beq l4b27
-l4b52	ldy #$0a    ; C% Lo
-	sta ($2d),y
+l4b52	ldy #$0a
+	sta ($2d),y ; write byte to C%
 	cmp #$3a
-	beq l4b42
+	beq l4b42   ; set C3% = $1F on colon
 l4b5a	rts
 
 
-; PROBABLY reading the next basic line into Z$ buffer
+; read the next basic line into Z$ buffer from file handle 2
+; C4% is length of line (zero if end of file)
 l4b5b	lda #$00    ; SYSM%+86
-	ldy #$25    ; C4% Hi
+	ldy #$25    ; C4%
 	sta ($2d),y
-	iny         ; C4% Lo
+	iny
 	sta ($2d),y
 	ldy #$2d    ; Z$1
 	lda ($2d),y
@@ -71,14 +77,14 @@ l4b5b	lda #$00    ; SYSM%+86
 l4b78	jsr $ffe4
 	sta ($22),y
 	bne l4b87
-l4b7f	cpy #$01
+l4b7f	cpy #$01    ; zero byte at offset 1? end of file
 	beq l4b8f
-l4b83	cpy #$04
+l4b83	cpy #$04    ; zero byte at offset 4 or later? end of line
 	bcs l4b8a
 l4b87	iny
 	bne l4b78
 l4b8a	tya
-	ldy #$26    ; C4% Lo
+	ldy #$26    ; C4%
 	sta ($2d),y
 l4b8f	jmp $ffcc
 
@@ -157,14 +163,14 @@ l4bf5	ldy #$33    ; C5% Hi
 	sta ($2d),y
 	rts
 
-l4c01	ldx #$02    ; SYSN1%
+l4c01	ldx #$02    ; SYSN1% - read byte from file handle 2 to C1%
 	jsr $ffc6
 	jsr $ffe4
 	ldy #$11    ; C1% Lo
 	sta ($2d),y
 	jmp $ffcc
 
-l4c10	ldx #$03    ; SYSN2%
+l4c10	ldx #$03    ; SYSN2% - write byte in C1% to file handle 3
 	jsr $ffc9
 	ldy #$11    ; C1% Lo
 	lda ($2d),y
