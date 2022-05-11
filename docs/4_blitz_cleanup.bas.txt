@@ -5,22 +5,43 @@
  1020 y$="1":r%=8:r1%=8:gosub3515:dimb%(2000):dimc%(1600):dimd%(1600)
  1025 dimg%(800):dimh%(200):dimh1%(200):dimi%(40):dimi1%(40):dimi2%(40)
  1030 dimi$(30):dimi1$(30):dimf$(7):close14:open14,r%,15:close15:open15,r1%,15
- 1035 x$="{home}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}":gosub3415:ift%=1goto1050
- 1040 ift3%=0goto3705
- 1045 a2$=a$:goto1060
+ 1035 x$="{home}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}"
+ 1036 gosub3415:ift%=1goto1050
+ 1040 ift3%=0goto1080
+ 1045 a2$=a$:goto1056
  1050 print#15,"i"+y$:input"{home}{down}{down}{down}{down}{down}{down}{down}filename    :";a$
  1055 a2$="c/"+left$(a$,14):ti$="000000"
- 1060 a1$=left$(a$,14):close14:open14,r%,15:close15:open15,r1%,15:close2
- 1065 open2,r%,2,a$+",p,r":r3%=14:gosub3305:get#2,b1$:get#2,b1$:r3%=15
- 1070 print#15,"s"+y$+":z/"+a1$:close6
- 1075 ift%>1thenopen6,r1%,6,y$+":z/"+a1$+",p,w":gosub3305:print#6,"a":close6
- 1080 print#15,"s"+y$+":p/"+a1$:close4:open4,r1%,4,y$+":p/"+a1$+",s,w"
- 1085 gosub3305:print#15,"s"+y$+":d/"+a1$:gosub3515:x1=0:x2=0:x3=0:x4=0
- 1090 print"{home}{down}{down}";:printspc(13);:print"program:  ";:printa$:ift8%thenprint"{home}pass0":goto1100
- 1095 print"{home}pass1"
+
+ 1056 gosub1092:rem pass1
+ 1057 gosub2930:rem pass2
+
+ 1060 ift%=1goto1080
+ 1061 ifx1+x3=0goto1065
+ 1062 printchr$(7);:printchr$(7);:printchr$(7);:print"{down}{down}continue  : {rvon}j{rvof}a/{rvon}n{rvof}o  "
+ 1063 getb1$:ifb1$="n"goto1080
+ 1064 ifb1$<>"j"goto1063
+ 1065 gosub3605:ift3%=0andt8%=0goto1080
+ 1066 ift3%=0thent8%=0:gosub3600:goto1068
+ 1067 t2%=t2%+1
+ 1068 printchr$(7);:k%=0:b5%=0:b2%=0:b3%=0:y%=0:ift%<4thenh=0:g=0
+ 1069 goto1045
+
+ 1080 a=0:a5$="ok":print"{home}"
+ 1081 printleft$(x$,6+x2);:printspc(x4);:print"{rvon}";:printa;:printa5$:close2:close3:close4:close15:a=0
+ 1082 fora=0to5:printchr$(7);:next
+ 1083 end
+
+ 1092 a1$=left$(a$,14):close14:open14,r%,15:close15:open15,r1%,15:close2
+ 1093 open2,r%,2,a$+",p,r":r3%=14:gosub3305:get#2,b1$:get#2,b1$:r3%=15
+ 1094 print#15,"s"+y$+":z/"+a1$:close6
+ 1095 ift%>1thenopen6,r1%,6,y$+":z/"+a1$+",p,w":gosub3305:print#6,"a":close6
+ 1096 print#15,"s"+y$+":p/"+a1$:close4:open4,r1%,4,y$+":p/"+a1$+",s,w"
+ 1097 gosub3305:print#15,"s"+y$+":d/"+a1$:gosub3515:x1=0:x2=0:x3=0:x4=0
+ 1098 print"{home}{down}{down}";:printspc(13);:print"program:  ";:printa$:ift8%thenprint"{home}pass0":goto1100
+ 1099 print"{home}pass1"
  1100 c%=0:e%=0:x0=0:ift%<4ort2%=0theni$=chr$(21):gosub2920
 
- 1105 sysm%+86:ifc4%=0goto2930:rem todo jumped to from 9 locations - fill buffer
+ 1105 sysm%+86:ifc4%=0thenreturn:rem todo jumped to from 9 locations - fill buffer
  1110 b1=asc(mid$(z$,3))+asc(mid$(z$,4))*256:d%(b5%)=b1-32767
  1115 c%(b5%)=e%:b5%=b5%+1:c1%=3:print"{home}{down}";:printb1
  1120 ifb3%=0thenb4=b1:b3%=1
@@ -396,7 +417,6 @@
 
  2920 e%=e%+len(i$):print#4,i$;:return
 
- 2929 rem end of pass 1
  2930 c%(b5%)=e%:i$=chr$(79):if(st)goto2945
  2935 gosub2920:get#2,i$:ifi$=""theni$=chr$(0)
  2940 if(st)=0goto2935
@@ -405,7 +425,7 @@
  2955 ift%>1thenclose6:print#15,"s"+y$+":z/"+a1$:goto2970
  2960 close6:open6,r1%,6,y$+":z/"+a1$+",p,w":gosub3305:print#6,chr$(1);
  2965 print#6,chr$(8);
- 2970 ift8%thengosub3400:goto3250
+ 2970 ift8%thengosub3400:return:rem todo was goto1061
  2975 i$="":h1=1:ifh=0goto3050
  2980 h1=8:z=h-1:ifz<16theni$=chr$(176+z):goto3000
  2985 ifz<32theni$=chr$(224+z):goto3000
@@ -467,21 +487,18 @@
  3230 next
  3235 close3:printleft$(x$,5+x2);:printspc(x4);:print"errors:";:printx1+x3;
  3240 print"     extensions:";:printx0:print#15,"s"+y$+":p/"+a1$
- 3245 print#15,"s"+y$+":d/"+a1$:ift%=1goto3705
- 3250 ifx1+x3=0goto3270
- 3255 printchr$(7);:printchr$(7);:printchr$(7);:print"{down}{down}continue  : {rvon}j{rvof}a/{rvon}n{rvof}o  "
- 3260 getb1$:ifb1$="n"goto3705
- 3265 ifb1$<>"j"goto3260
- 3270 gosub3605:ift3%=0goto3390
- 3275 t2%=t2%+1
- 3280 printchr$(7);:k%=0:b5%=0:b2%=0:b3%=0:y%=0:ift%<4thenh=0:g=0
- 3285 goto1045
+ 3245 print#15,"s"+y$+":d/"+a1$
+ 3246 return
+
  3290 c5%=7218:c6%=l2%:c7%=b5%:sysn%:rem 7218 is offset of d%()
  3291 ifc5%<0thenc5%=0:gosub3320
  3295 l2%=c%(c5%)+c%:return
- 3300 f1=int(f/256):l2%=f-f1*256:print#3,chr$(l2%);:print#3,chr$(f1);:return
+ 3300 f1=int(f/256):l2%=f-f1*256:print#3,chr$(l2%);:print#3,chr$(f1);
+ 3301 return
+
  3305 input#r3%,a,a5$:ifa=0thenreturn
- 3310 x2=15:goto3710
+ 3310 x2=15:goto1081
+
  3315 x1$="syntax error":gosub3345:return
  3320 x1$="undef'd statement error":b1=d%(j%-1)+32767
  3325 x3=x3+1:gosub3370:return
@@ -497,8 +514,7 @@
  3375 print#129,"?";:print#129,x1$;:print#129," in";:print#129,b1:close129
  3380 x2=x2+1:ifx2=18thenx4=x4+40:x2=0:ifx4>40thenx4=0
  3385 return
- 3390 ift8%=0goto3705
- 3395 t8%=0:gosub3600:goto3280
+
  3400 print#15,"s"+y$+":p/"+a1$:print#15,"s"+y$+":d/"+a1$:f=e%+k%
  3405 ift7%<fthent7%=f
  3410 return
@@ -559,15 +575,14 @@
  3685 goto3645
  3690 ifb1$="prg"thenclose9:return
  3695 goto3630
- 3700 t3%=0:close9:return
- 3705 a=0:a5$="ok":print"{home}"
- 3710 printleft$(x$,6+x2);:printspc(x4);:print"{rvon}";:printa;:printa5$:close2:close3:close4:close15:a=0
- 3715 fora=0to5:printchr$(7);:next:end:end
+ 3700 t3%=0:close9
+ 3701 return
+
  3720 r1%=9:gosub3745
  3725 printleft$(x$,15);:printspc(27);:inputr%:ifr%<4orr%>15goto3725
  3730 gosub3745
  3735 printleft$(x$,17);:printspc(27);:inputr1%:ifr1%<4orr1%>15goto3735
  3740 ifr%=r1%goto3725
  3745 printleft$(x$,15);:print"device-nbr. source prog. :  ";:printr%
- 3750 printleft$(x$,17);:print"device-nbr. compiled prog. :";:printr1%:return
-
+ 3750 printleft$(x$,17);:print"device-nbr. compiled prog. :";:printr1%
+ 3751 return
