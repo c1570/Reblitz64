@@ -7,25 +7,21 @@
  1030 dimi$(30):dimi1$(30):dimf$(7):close14:open14,r%,15:close15:open15,r1%,15
  1035 x$="{home}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}"
  1036 gosub3415
- 1037 ift%=1thenprint#15,"i"+y$:input"{home}{down}{down}{down}{down}{down}{down}{down}filename    :";a$:a2$="c/"+left$(a$,14):ti$="000000":gosub1056:goto1041
+ 1037 ift%=1thenprint#15,"i"+y$:input"{home}{down}{down}{down}{down}{down}{down}{down}filename    :";a$:a2$="c/"+left$(a$,14):ti$="000000":gosub1056:goto1041:rem"else
  1040 ift3%<>0thena2$=a$:gosub1056
  1041 a=0:a5$="ok":print"{home}"
  1042 printleft$(x$,6+x2);:printspc(x4);:print"{rvon}";:printa;:printa5$:close2:close3:close4:close15
  1043 fora=0to5:printchr$(7);:next
  1044 end
 
- 1056 gosub1092:rem pass1
+ 1056 gosub1092:rem"do":rem pass1
  1057 gosub2930:rem pass2
  1060 ift%=1thenreturn
- 1061 ifx1+x3=0goto1065
- 1062 printchr$(7);:printchr$(7);:printchr$(7);:print"{down}{down}continue  : {rvon}j{rvof}a/{rvon}n{rvof}o  "
- 1063 getb1$:ifb1$="n"thenreturn
- 1064 ifb1$<>"j"goto1063
  1065 gosub3605:ift3%=0andt8%=0thenreturn
- 1066 ift3%=0thent8%=0:gosub3600:goto1068
+ 1066 ift3%=0thent8%=0:gosub3600:goto1068:rem"else
  1067 t2%=t2%+1
  1068 printchr$(7);:k%=0:b5%=0:b2%=0:b3%=0:y%=0:ift%<4thenh=0:g=0
- 1069 a2$=a$:goto1056
+ 1069 a2$=a$:goto1056:rem"while(true)
 
  1092 a1$=left$(a$,14):close14:open14,r%,15:close15:open15,r1%,15:close2
  1093 open2,r%,2,a$+",p,r":r3%=14:gosub3305:get#2,b1$:get#2,b1$:r3%=15
@@ -33,23 +29,22 @@
  1095 ift%>1thenopen6,r1%,6,y$+":z/"+a1$+",p,w":gosub3305:print#6,"a":close6
  1096 print#15,"s"+y$+":p/"+a1$:close4:open4,r1%,4,y$+":p/"+a1$+",s,w"
  1097 gosub3305:print#15,"s"+y$+":d/"+a1$:gosub3390:x1=0:x2=0:x3=0:x4=0
- 1098 print"{home}{down}{down}";:printspc(13);:print"program:  ";:printa$:ift8%thenprint"{home}pass0":goto1100
+ 1098 print"{home}{down}{down}";:printspc(13);:print"program:  ";:printa$:ift8%thenprint"{home}pass0":goto1100:rem"else
  1099 print"{home}pass1"
- 1100 c%=0:e%=0:x0=0:ift%<4ort2%=0theni$=chr$(21):gosub2920
+ 1100 c%=0:c2%=1:e%=0:x0=0:ift%<4ort2%=0theni$=chr$(21):gosub2920
 
- 1105 sysm%+86:ifc4%=0thenreturn:rem todo jumped to from 9 locations - fill buffer
+ 1105 ifc2%=0thengoto1135:rem"do,else
+ 1106 sysm%+86:ifc4%=0thenreturn
  1110 b1=asc(mid$(z$,3))+asc(mid$(z$,4))*256:d%(b5%)=b1-32767
  1115 c%(b5%)=e%:b5%=b5%+1:c1%=3:print"{home}{down}";:printb1
  1120 ifb3%=0thenb4=b1:b3%=1
- 1125 sysm%:i$="":i=0:ifc2%=0andc3%>0goto1150
- 1130 ifc2%goto1105:rem todo jumped to from 11 locations - handle next char or next line
+ 1125 sysm%:i$="":i=0:ifc2%=0andc3%>0goto1150:rem TODO
  1135 i$="":i=0:ifc3%=0goto1175
- 1140 sysm%:ifc2goto1105
+ 1140 sysm%:ifc2%goto1105:rem"continue
  1145 ifc3%=0goto1175
- 1150 sysm%:ifc2%goto1105
+ 1150 sysm%:ifc2%goto1105:rem"continue
  1155 ifc3%=0goto1175
- 1160 sysm%:ifc2%goto1105
- 1165 ifc3%goto1130
+ 1160 sysm%:ifc2%orc3%goto1105:rem"continue
  1170 goto1215
  1175 x5=0:ifc%<128goto1245
  1180 c5%=c%-127:ifc5%>35goto1205
@@ -76,10 +71,10 @@
 
  1280 sysm%
  1285 i$=chr$(j%)
- 1290 gosub2920:ifc3%goto1130:rem todo jumped to from 18 locations - write i$, next char if end of instruction
- 1295 gosub3315:goto1130:rem todo jumped to from 29 locations - syntax error, next char
- 1296 gosub3340:goto1130:rem todo jumped to from 22 locations - type mismatch, next char
- 1297 rem end of block from 1105
+ 1290 gosub2920:ifc3%goto1105:rem todo jumped to from 18 locations - write i$, next char if end of instruction
+ 1295 gosub3315:goto1105:rem todo jumped to from 29 locations - syntax error, next char
+ 1296 gosub3340:rem todo jumped to from 22 locations - type mismatch, next char
+ 1297 goto1105:rem"while(true)
 
  1299 j%=79:goto1280
  1300 j%=78:goto1280
@@ -87,7 +82,7 @@
  1310 j%=30:goto1280
  1315 j%=29:goto1280
  1320 j%=21:goto1280
- 1325 x1$="no valid command  ":gosub3345:goto1130
+ 1325 x1$="no valid command  ":gosub3345:goto1105
 
  1330 sysm%:fa=1:gosub2635:e1$=j$:e$=chr$(asc(j$)or64)+mid$(j$,2):e2%=l2%
  1335 ifc%<>178goto1295
@@ -101,7 +96,7 @@
 
  1380 j%=19:sysm%:ifc3%goto1285
  1385 fa=1:gosub2635:iflen(j$)=1thenj$=chr$(160)+chr$(asc(j$)and31)
- 1390 i$=j$+chr$(20):gosub2920:ifc3%goto1130
+ 1390 i$=j$+chr$(20):gosub2920:ifc3%goto1105
  1395 ifc%<>44goto1295
  1400 sysm%:goto1385
 
@@ -113,7 +108,7 @@
  1430 k1%=k1%+1:k$=k$+chr$(c%):goto1415
  1435 ifc%=34thenk2%=58:k3%=44:goto1415
  1440 print#5,chr$(k1%);:print#5,k$;:k%=k%+k1%+1:ifc%=44goto1410
- 1445 goto1130
+ 1445 goto1105
  1450 sysm%:gosub2270:ifl2%goto1296
  1455 i$=i$+chr$(72):ifc%<>44goto1295
  1460 sysm%:goto1480
@@ -132,13 +127,13 @@
  1525 j1%=h1%(h1)and255:h1%(h1)=j1%:i$=i$+chr$(16)+chr$(j1%)+f$
  1530 g1=h1*2+7:f=int(g1/256):j1%=g1-f*256:i$=i$+chr$(f)+chr$(j1%)
  1535 gosub2920
- 1540 ifc3%goto1130
+ 1540 ifc3%goto1105
  1545 ifc%<>44goto1295
  1550 goto1520
  1555 sysm%:gosub2635:j%=75:ifl2%thenj%=74
  1560 ifasc(j$)=86goto1325
  1565 iflen(j$)=1andl2%=0thenj$=chr$(160)+chr$(asc(j$)and31)
- 1570 i$=i$+j$+chr$(j%):gosub2920:i$="":ifc3%goto1130
+ 1570 i$=i$+j$+chr$(j%):gosub2920:i$="":ifc3%goto1105
  1575 ifc%<>44goto1295
  1580 goto1555
  1585 j%=25:goto1595
@@ -156,7 +151,7 @@
  1645 ifc%=137thenj%=82:goto1595
  1650 ifc%>47andc%<58thenj%=82:goto1605
  1655 b%(b2%)=e%+1:b2%=b2%+1:i$=chr$(31)+chr$(255):gosub2920:i$=""
- 1660 goto1130
+ 1660 goto1105
  1665 sysm%:ifc2%goto1105:rem rem token
  1670 ifc%=42goto1685
  1675 sysm%:ifc2%=0goto1675
@@ -256,7 +251,7 @@
  2120 j%=62:iff5thenj%=67
  2125 i$=i$+chr$(j%):goto1290
  2130 iff5theni$=chr$(69):goto1290
- 2135 goto1130
+ 2135 goto1105
  2140 sysm%:f5=1:gosub2270:ifl2%goto1296
  2145 e$=i$+chr$(96):ifc3%goto2195
  2150 ifc%<>44goto1295
