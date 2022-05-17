@@ -2,7 +2,7 @@
  1005 c4%=0:z$="                ":z$=z$+z$+z$+z$
  1010 z$=z$+z$+z$+left$(z$,63):c5%=0:c6%=0:c7%=0
  1015 m%=peek(45)+peek(46)*256-282:n%=m%+141:q%=31020:q=0:printchr$(14)
- 1020 y$="1":r%=8:r1%=8:gosub3515:dimb%(2000):dimc%(1600):dimd%(1600)
+ 1020 y$="1":r%=8:r1%=8:t1%=8082:gosub3390:dimb%(2000):dimc%(1600):dimd%(1600)
  1025 dimg%(800):dimh%(200):dimh1%(200):dimi%(40):dimi1%(40):dimi2%(40)
  1030 dimi$(30):dimi1$(30):dimf$(7):close14:open14,r%,15:close15:open15,r1%,15
  1035 x$="{home}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}{down}"
@@ -27,7 +27,7 @@
  1069 goto1045
 
  1080 a=0:a5$="ok":print"{home}"
- 1081 printleft$(x$,6+x2);:printspc(x4);:print"{rvon}";:printa;:printa5$:close2:close3:close4:close15:a=0
+ 1081 printleft$(x$,6+x2);:printspc(x4);:print"{rvon}";:printa;:printa5$:close2:close3:close4:close15
  1082 fora=0to5:printchr$(7);:next
  1083 end
 
@@ -36,7 +36,7 @@
  1094 print#15,"s"+y$+":z/"+a1$:close6
  1095 ift%>1thenopen6,r1%,6,y$+":z/"+a1$+",p,w":gosub3305:print#6,"a":close6
  1096 print#15,"s"+y$+":p/"+a1$:close4:open4,r1%,4,y$+":p/"+a1$+",s,w"
- 1097 gosub3305:print#15,"s"+y$+":d/"+a1$:gosub3515:x1=0:x2=0:x3=0:x4=0
+ 1097 gosub3305:print#15,"s"+y$+":d/"+a1$:gosub3390:x1=0:x2=0:x3=0:x4=0
  1098 print"{home}{down}{down}";:printspc(13);:print"program:  ";:printa$:ift8%thenprint"{home}pass0":goto1100
  1099 print"{home}pass1"
  1100 c%=0:e%=0:x0=0:ift%<4ort2%=0theni$=chr$(21):gosub2920
@@ -58,11 +58,11 @@
  1175 x5=0:ifc%<128goto1245
  1180 c5%=c%-127:ifc5%>35goto1205
  1185 onc5%goto1299,1330,1380,1405,1450,1465,1520,1555,1255,1585:rem end,for,next,data,input#,input,dim,read,let,goto
- 1190 onc5%-10goto1620,1630,1310,1590,1315,1665,1305,1780,1825,1895:rem run,if,restore,gosub,return,rem,stop,on,wait
+ 1190 onc5%-10goto1620,1630,1310,1590,1315,1665,1305,1780,1825,1895:rem run,if,restore,gosub,return,rem,stop,on,wait,load
  1195 onc5%-20goto1900,1905,1960,1860,2010,2055,1325,1325,1320,2015:rem save,verify,def,poke,print#,print,cont,list,clr,cmd
  1200 onc5%-30goto1870,2140,2200,2220,1300:rem sys,open,close,get,new
  1205 c5%=c5%-75:ifc5%<0goto1295
- 1210 onc5%goto2260:rem usr
+ 1210 onc5%goto2260:rem usr token
 
  1215 x1$="extentions":gosub3365:i$=chr$(71)+chr$(c%):k2%=58
  1220 sysm%+3:ifc%=k2%orc%=0goto1235
@@ -73,7 +73,7 @@
  1245 ifc%<65orc%>90goto1215
  1250 goto1260
 
- 1255 sysm%:rem let
+ 1255 sysm%:rem let token
  1260 gosub2635:e$=chr$(asc(j$)or64)+mid$(j$,2):e2%=l2%:ifc%<>178goto1295
  1265 sysm%:gosub2275:ifl2%<>e2%goto1296
  1270 i$=i$+e$:goto1290
@@ -161,7 +161,7 @@
  1650 ifc%>47andc%<58thenj%=82:goto1605
  1655 b%(b2%)=e%+1:b2%=b2%+1:i$=chr$(31)+chr$(255):gosub2920:i$=""
  1660 goto1130
- 1665 sysm%:ifc2%goto1105
+ 1665 sysm%:ifc2%goto1105:rem rem token
  1670 ifc%=42goto1685
  1675 sysm%:ifc2%=0goto1675
  1680 goto1105
@@ -176,14 +176,17 @@
  1725 j%=j%+1:ifc%<>65goto1740
  1730 i$=chr$(j%)
  1735 gosub2920:goto1675
- 1740 ifc%<>80goto1675
- 1745 f=1:forf=1to5:sysm%:j%=c%-48:ifj%<0orj%>9goto1675
- 1750 i%(f)=j%:next:f=2^(i%(1)+i%(2)-i%(3)):iff>255goto1675
+ 1740 ifc%<>80goto1675:rem rem**sp00000
+ 1745 forf=1to5:sysm%:j%=c%-48:ifj%<0orj%>9goto1675
+ 1750 i%(f)=j%
+ 1751 next
+ 1752 f=2^(i%(1)+i%(2)-i%(3)):iff>255goto1675
  1755 f1=71:j1%=2^(i%(4)+i%(5)-4):ifj1%<8thenf1=113
  1760 ifj1%>255goto1675
  1765 i$=chr$(166)+chr$(f)+chr$(167)+chr$(2)+chr$(2)+chr$(23)+chr$(166)
  1770 i$=i$+chr$(f1)+chr$(167)+chr$(2)+chr$(1)+chr$(23)+chr$(166)+chr$(j1%)
- 1775 i$=i$+chr$(179)+chr$(23)+chr$(84):goto1735
+ 1775 i$=i$+chr$(179)+chr$(23)+chr$(84)
+ 1776 goto1735
  1780 sysm%:gosub2270:ifl2%goto1296
  1785 j%=28:ifc%=137thenj%=27:goto1795
  1790 ifc%<>141goto1295
@@ -462,12 +465,15 @@
  3115 next
 
  3120 print#3,chr$(22);:ifk%=0goto3140
- 3125 open2,r1%,2,y$+":d/"+a1$:c=1:forc=1tok%:get#2,b$
+ 3125 open2,r1%,2,y$+":d/"+a1$:
+ 3126 forc=1tok%:get#2,b$
  3130 ifb$=""thenb$=chr$(0)
- 3135 print#3,b$;:next:close2
+ 3135 print#3,b$;
+ 3136 next:close2
  3140 print#3,chr$(255);:j%=0:j1%=0:open2,r1%,2,y$+":p/"+a1$+",s,r"
 
- 3145 print"{home}{down}pass2  ":n1%=n%+111:n2%=n1%+15:forl=0toe%-1:l%=l
+ 3145 print"{home}{down}pass2  ":n1%=n%+111:n2%=n1%+15
+ 3146 forl=0toe%-1:l%=l
  3150 sysn1%:ifl%<c%(j%)orj%=b5%goto3180
  3155 ifj%<b5%thenprint"{home}{down}{down}";:printd%(j%)+32767:j%=j%+1:ifl%>=c%(j%)goto3155
  3160 ift%>1goto3180
@@ -475,13 +481,17 @@
  3170 print#6,chr$(l2%);:print#6,chr$(l3%);:print#6,"=";:print#6,d%(j%-1)+32767;
  3175 print#6,chr$(0);
  3180 ifl%<>b%(j1%)goto3200
- 3185 j1%=j1%+1:ifc1%=255thenc1%=c%(j%)-l%+1:goto3200
- 3190 l2%=c1%:sysn1%:l2%=l2%*256+c1%-32767:gosub3290:c1%=l2%/256
- 3195 sysn2%:l%=l%+1:l=l%:c1%=l2%-c1%*256
- 3200 sysn2%:next:close2:ift%=4andt2%>0goto3235
+ 3185 j1%=j1%+1
+ 3186 ifc1%=255thenc1%=c%(j%)-l%+1:goto3200
+ 3190 l2%=c1%:sysn1%:l2%=l2%*256+c1%-32767:gosub3290
+ 3195 c1%=l2%/256:sysn2%:l%=l%+1:l=l%:c1%=l2%-c1%*256
+ 3200 sysn2%
+ 3201 next
+ 3202 close2:ift%=4andt2%>0goto3235
  3205 ift%=4thenf=k%+e%:iff<t7%thenforf=ftot7%-1:print#3,chr$(79);:next
  3210 ift%=1thenprint#6,chr$(0);:print#6,chr$(0);:close6
- 3215 i$=chr$(0)+chr$(0)+chr$(0)+chr$(0)+chr$(0):f=0:forf=0tog-1:f1=g%(f)
+ 3215 i$=chr$(0)+chr$(0)+chr$(0)+chr$(0)+chr$(0)
+ 3216 forf=0tog-1:f1=g%(f)
  3220 iff1<0thenf1=f1+65536
  3225 l2%=f1/256:l3%=f1-l2%*256:print#3,chr$(l2%);:print#3,chr$(l3%);:print#3,i$;
  3230 next
@@ -515,6 +525,8 @@
  3380 x2=x2+1:ifx2=18thenx4=x4+40:x2=0:ifx4>40thenx4=0
  3385 return
 
+ 3390 print"{clr}";:printspc(13);:print"skyles - blitz":printspc(12);:printt$:return
+
  3400 print#15,"s"+y$+":p/"+a1$:print#15,"s"+y$+":d/"+a1$:f=e%+k%
  3405 ift7%<fthent7%=f
  3410 return
@@ -524,7 +536,7 @@
  3430 ift%=2thena$="drive 0":b$="drive 1":goto3445
  3435 ift%<>3goto3425
  3440 gosub3720:y$="0":a$="device"+str$(r%):b$="device"+str$(r1%)
- 3445 gosub3515:print"{home}{down}{down}";:printspc(13);:print"select mode :"
+ 3445 gosub3390:print"{home}{down}{down}";:printspc(13);:print"select mode :"
  3450 print"{down}{down}1. =  one file to drive 1      "
  3455 print"{down}{down}2. =  all files from     ";:printa$;:print" to "
  3460 print"      blank diskette in ";:printb$;:print" wth"
@@ -537,8 +549,7 @@
  3495 print"      overlay":printx$;:print"please select!"
  3500 gett%:ift%<1ort%>4goto3500
  3505 t$="(prog. mode :"+str$(t%)+")":ift%=4thent8%=1
- 3510 t1%=8082:ift%>1thengosub3515:goto3520
- 3515 print"{clr}";:printspc(13);:print"skyles - blitz":printspc(12);:printt$:return
+ 3510 gosub3390:ift%=1thenreturn
  3520 print"{down}{down}In ";:printa$;
  3525 print" insert diskette with source for compilation     "
  3530 print"{down}press    {rvon}y{rvof}  when ready "
@@ -549,19 +560,22 @@
  3555 geta$:ifa$="n"goto3595
  3560 ifa$<>"y"goto3555
  3565 print"{down}formatting diskette !    ":open9,r%,0,"$0":r3%=14
- 3570 gosub3305:r3%=15:a=1:fora=1to30:get#9,a$:ifa$<>chr$(34)thennext
- 3575 b$="":a=1:fora=1to16:get#9,a$:ifa$<>chr$(34)thenb$=b$+a$:next
+ 3570 gosub3305:r3%=15
+ 3571 fora=1to30:get#9,a$:ifa$<>chr$(34)thennext
+ 3575 b$="":fora=1to16:get#9,a$:ifa$<>chr$(34)thenb$=b$+a$:next
  3580 ifright$(b$,1)=" "thenb$=left$(b$,len(b$)-1):goto3580
  3585 get#9,a$:get#9,a$:get#9,a$:get#9,b1$:b1$=a$+b1$:close9:print#15,"n";
  3590 print#15,y$;:print#15,":";:print#15,b$;:print#15,",";:print#15,b1$:gosub3305
  3595 print#15,"i";:print#15,y$:gosub3305
  3600 t2%=0:t3%=0
  3605 open9,r%,0,"$0":ift3%goto3625
- 3610 t3%=1:fort3%=1to6:get#9,a$:next:t3%=t3%:fort3%=t3%to33:get#9,a$
+ 3610 fort3%=1to6:get#9,a$:next
+ 3611 fort3%=t3%to33:get#9,a$
  3615 ifa$<>""thennext
  3620 goto3630
- 3625 t4%=1:fort4%=1tot3%:get#9,a$:next
- 3630 a$="":b1$="":t5%=0:t4%=1:fort4%=1to4:get#9,b$:t3%=t3%+1
+ 3625 fort4%=1tot3%:get#9,a$:next
+ 3630 a$="":b1$="":t5%=0
+ 3631 fort4%=1to4:get#9,b$:t3%=t3%+1
  3635 if(st)goto3700
  3640 next
  3645 get#9,b$:t3%=t3%+1:if(st)goto3700

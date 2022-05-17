@@ -3,25 +3,25 @@ var,A$,
 var,A1$,
 var,A2$,
 var,A5$,
-var,B%(,
+var,B%(,consecutive branch index to its p-code offset
 var,B$,
 var,B1,current BASIC input line number (as given in input program)
 var,B1$,
-var,B2%,
+var,B2%,count of branches in p-code so far
 var,B3%,
 var,B4,
-var,B5%,current consecutive BASIC line number (0, 1, 2, ...)
+var,B5%,current consecutive BASIC line number (0 - 1 - 2 - ...)
 var,C%(,consecutive input line number to p-code offset
-var,C%,current BASIC token
+var,C%,sysm% current BASIC token
 var,C,
-var,C1%,
-var,C2%,
+var,C1%,sysm% current offset in buffer
+var,C2%,sysm% 1 iff at end of buffer
 var,C2,
-var,C3%,
-var,C4%,
-var,C5%,current BASIC token (MSB unset)
-var,C6%,
-var,C7%,
+var,C3%,sysm% $1f iff at end of instruction
+var,C4%,sysm%/sysm%+86 length of buffer
+var,C5%,current BASIC token (MSB unset) or sysn% array id
+var,C6%,sysn% id to look for
+var,C7%,sysn% array length
 var,D%(,consecutive input line number to actual input BASIC line number (in signed int)
 var,E%,length of p-code
 var,E$,tmp string
@@ -40,25 +40,25 @@ var,F7,
 var,F8,
 var,FA,
 var,FX,
-var,G%(,
-var,G,
+var,G%(,list of BASIC variables
+var,G,BASIC variable count
 var,G1,
-var,H%(,
-var,H,
-var,H1%(,
+var,H%(,list of BASIC arrays (with H1%())??
+var,H,BASIC array count??
+var,H1%(,list of BASIC arrays (with H%())??
 var,H1,
 var,I%(,
 var,I,
-var,I$(,
+var,I$(,BASIC arrays??
 var,I$,p-code buffer
 var,I0,
 var,I1%(,
 var,I1,
-var,I1$(,
+var,I1$(,some tmp variable in context with arrays?? does not seem to have to be an array
 var,I2%(,
 var,I2,
 var,I3,
-var,I4,
+var,I4,BASIC array count??
 var,J%,current p-code opcode
 var,J$,
 var,J1%,
@@ -66,30 +66,30 @@ var,J1$,
 var,K%,
 var,K$,
 var,K1%,
-var,K2%,
+var,K2%,cmpr - 58 colon - 34 quote
 var,K3%,
 var,L%,
-var,L2%,
-var,L3%,
-var,M%,
-var,N%,
+var,L2%,var type - 255 iff string??
+var,L3%,tmp or var type - 128 iff integer??
+var,M%,start addr of current BASIC line data helper
+var,N%,start addr of disk read/write helper
 var,N1%,
 var,N2%,
 var,Q%,
 var,Q,
-var,R%,
-var,R1%,
-var,R3%,
+var,R%,source floppy device number
+var,R1%,destination floppy device number
+var,R3%,file number to read drive error from
 var,ST,
-var,T%,
+var,T%,Compile mode - 1 iff single floppy and single file
 var,T$,
-var,T1%,
-var,T2%,
-var,T3%,
+var,T1%,length of runtime in bytes
+var,T2%,number of current file in multiple files compile mode
+var,T3%,tmp or index of current file in disk dir in multiple files compile mode
 var,T4%,
 var,T5%,
 var,T7%,
-var,T8%,
+var,T8%,flag - 1 iff multiple files overlay compile mode
 var,TI$,
 var,X$,
 var,X0,
@@ -99,7 +99,7 @@ var,X2,
 var,X3,
 var,X4,
 var,X5,
-var,Y%,
+var,Y%,ignore error flag - set by REM ** E
 var,Y$,
 var,Z,
 var,Z$,
