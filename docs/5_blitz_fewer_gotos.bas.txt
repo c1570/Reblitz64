@@ -48,7 +48,7 @@
  1170 goto1230
  1175 x5=0:ifc%<128and(c%<65orc%>90)goto1230
  1176 ifc%>64andc%<91goto1260
- 1177 ifc%=128thenj%=79:goto1220
+ 1177 ifc%=128theni$=chr$(79):sysm%:goto1222
  1178 ifc%=129goto1330
  1179 ifc%=130goto1380
  1180 ifc%=131goto1405
@@ -60,11 +60,11 @@
  1186 ifc%=137goto1585
  1187 ifc%=138goto1620
  1188 ifc%=139goto1630
- 1189 ifc%=140thenj%=30:goto1220
+ 1189 ifc%=140theni$=chr$(30):sysm%:goto1222
  1190 ifc%=141goto1590
- 1191 ifc%=142thenj%=29:goto1220
+ 1191 ifc%=142theni$=chr$(29):sysm%:goto1222
  1192 ifc%=143goto1665
- 1193 ifc%=144thenj%=73:goto1220
+ 1193 ifc%=144theni$=chr$(73):sysm%:goto1222
  1194 ifc%=145goto1780
  1195 ifc%=146goto1825
  1196 ifc%=147goto1895
@@ -76,19 +76,17 @@
  1202 ifc%=153goto2055
  1203 ifc%=154goto1225
  1204 ifc%=155goto1225
- 1205 ifc%=156thenj%=21:goto1220
+ 1205 ifc%=156theni$=chr$(21):sysm%:goto1222
  1206 ifc%=157goto2015
  1207 ifc%=158goto1870
  1208 ifc%=159goto2140
  1209 ifc%=160goto2200
  1210 ifc%=161goto2220
- 1211 ifc%=162thenj%=78:goto1220
+ 1211 ifc%=162theni$=chr$(78):sysm%:goto1222
  1212 ifc%<203goto1223
  1213 ifc%=203goto2260
  1214 goto1230
 
- 1220 sysm%
- 1221 i$=chr$(j%)
  1222 gosub2920:ifc3%goto1105:rem todo jumped to from 18 locations - write i$, next char if end of instruction
  1223 gosub3315:goto1105:rem todo jumped to from 29 locations - syntax error, next char
  1224 gosub3340:goto1105:rem todo jumped to from 22 locations - type mismatch, next char
@@ -117,7 +115,7 @@
  1370 e$=e$+chr$(18):sysm%:gosub2270:e1$=e1$+i$:ifl2%<>e2%goto1224
  1375 i$=e1$+e$:goto1222
 
- 1380 j%=19:sysm%:ifc3%goto1221
+ 1380 sysm%:ifc3%theni$=chr$(19):goto1222
  1385 fa=1:gosub2635:iflen(j$)=1thenj$=chr$(160)+chr$(asc(j$)and31)
  1390 i$=j$+chr$(20):gosub2920:ifc3%goto1105
  1395 ifc%<>44goto1223
@@ -170,7 +168,7 @@
  1625 goto1600
  1630 sysm%:gosub2270:ifc%=137thengosub2920:j%=82:goto1595
  1635 ifc%<>167goto1223
- 1640 gosub2920:sysm%:ifc%=142thenj%=88:goto1220
+ 1640 gosub2920:sysm%:ifc%=142theni$=chr$(88):sysm%:goto1222
  1645 ifc%=137thenj%=82:goto1595
  1650 ifc%>47andc%<58thenj%=82:goto1605
  1655 b%(b2%)=e%+1:b2%=b2%+1:i$=chr$(31)+chr$(255):gosub2920:i$=""
