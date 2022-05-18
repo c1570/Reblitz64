@@ -46,14 +46,46 @@
  1155 ifc3%=0goto1175
  1160 sysm%:ifc2%orc3%goto1105:rem"continue
  1170 goto1215
- 1175 x5=0:ifc%<128goto1245
- 1180 c5%=c%-127:ifc5%>35goto1205
- 1185 onc5%goto1299,1330,1380,1405,1450,1465,1520,1555,1255,1585:rem end,for,next,data,input#,input,dim,read,let,goto
- 1190 onc5%-10goto1620,1630,1310,1590,1315,1665,1305,1780,1825,1895:rem run,if,restore,gosub,return,rem,stop,on,wait,load
- 1195 onc5%-20goto1900,1905,1960,1860,2010,2055,1325,1325,1320,2015:rem save,verify,def,poke,print#,print,cont,list,clr,cmd
- 1200 onc5%-30goto1870,2140,2200,2220,1300:rem sys,open,close,get,new
- 1205 c5%=c5%-75:ifc5%<0goto1295
- 1210 onc5%goto2260:rem usr token
+ 1175 x5=0:ifc%<128and(c%<65orc%>90)goto1215
+ 1176 ifc%>64andc%<91goto1260
+ 1177 ifc%=128thenj%=79:goto1280
+ 1178 ifc%=129goto1330
+ 1179 ifc%=130goto1380
+ 1180 ifc%=131goto1405
+ 1181 ifc%=132goto1450
+ 1182 ifc%=133goto1465
+ 1183 ifc%=134goto1520
+ 1184 ifc%=135goto1555
+ 1185 ifc%=136goto1255
+ 1186 ifc%=137goto1585
+ 1187 ifc%=138goto1620
+ 1188 ifc%=139goto1630
+ 1189 ifc%=140thenj%=30:goto1280
+ 1190 ifc%=141goto1590
+ 1191 ifc%=142thenj%=29:goto1280
+ 1192 ifc%=143goto1665
+ 1193 ifc%=144thenj%=73:goto1280
+ 1194 ifc%=145goto1780
+ 1195 ifc%=146goto1825
+ 1196 ifc%=147goto1895
+ 1197 ifc%=148goto1900
+ 1198 ifc%=149goto1905
+ 1199 ifc%=150goto1960
+ 1200 ifc%=151goto1860
+ 1201 ifc%=152goto2010
+ 1202 ifc%=153goto2055
+ 1203 ifc%=154goto1325
+ 1204 ifc%=155goto1325
+ 1205 ifc%=156thenj%=21:goto1280
+ 1206 ifc%=157goto2015
+ 1207 ifc%=158goto1870
+ 1208 ifc%=159goto2140
+ 1209 ifc%=160goto2200
+ 1210 ifc%=161goto2220
+ 1211 ifc%=162thenj%=78:goto1280
+ 1212 ifc%<203goto1295
+ 1213 ifc%=203goto2260
+ 1214 goto1215
 
  1215 x1$="extentions":gosub3365:i$=chr$(71)+chr$(c%):k2%=58
  1220 sysm%+3:ifc%=k2%orc%=0goto1235
@@ -61,8 +93,6 @@
  1230 i$=i$+chr$(c%):goto1220
  1235 ifc%=34thenk2%=58:goto1230
  1240 i$=i$+":"+chr$(158)+"2082:":goto1290
- 1245 ifc%<65orc%>90goto1215
- 1250 goto1260
 
  1255 sysm%:rem let token
  1260 gosub2635:e$=chr$(asc(j$)or64)+mid$(j$,2):e2%=l2%:ifc%<>178goto1295
@@ -76,12 +106,6 @@
  1296 gosub3340:rem todo jumped to from 22 locations - type mismatch, next char
  1297 goto1105:rem"while(true)
 
- 1299 j%=79:goto1280
- 1300 j%=78:goto1280
- 1305 j%=73:goto1280
- 1310 j%=30:goto1280
- 1315 j%=29:goto1280
- 1320 j%=21:goto1280
  1325 x1$="no valid command  ":gosub3345:goto1105
 
  1330 sysm%:fa=1:gosub2635:e1$=j$:e$=chr$(asc(j$)or64)+mid$(j$,2):e2%=l2%
