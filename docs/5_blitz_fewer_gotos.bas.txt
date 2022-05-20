@@ -57,27 +57,27 @@
  1183 ifc%=134thengosub1520:goto1215
  1184 ifc%=135thengosub1555:goto1215
  1185 ifc%=136thengosub1255:goto1215
- 1186 ifc%=137thengosub1585:goto1215
+ 1186 ifc%=137thenj%=25:gosub1595:goto1215
  1187 ifc%=138thengosub1620:goto1215
  1188 ifc%=139thengosub1630:goto1215
  1189 ifc%=140theni$=chr$(30):sysm%:goto1215
- 1190 ifc%=141thengosub1590:goto1215
+ 1190 ifc%=141thenj%=26:gosub1595:goto1215
  1191 ifc%=142theni$=chr$(29):sysm%:goto1215
  1192 ifc%=143thengosub1665:goto1215
  1193 ifc%=144theni$=chr$(73):sysm%:goto1215
  1194 ifc%=145thengosub1780:goto1215
  1195 ifc%=146thengosub1825:goto1215
- 1196 ifc%=147thengosub1895:goto1215
- 1197 ifc%=148thengosub1900:goto1215
- 1198 ifc%=149thengosub1905:goto1215
+ 1196 ifc%=147thenj%=93:gosub1910:goto1215
+ 1197 ifc%=148thenj%=94:gosub1910:goto1215
+ 1198 ifc%=149thenj%=95:gosub1910:goto1215
  1199 ifc%=150thengosub1960:goto1215
  1200 ifc%=151thengosub1860:goto1215
- 1201 ifc%=152thengosub2010:goto1215
+ 1201 ifc%=152thenf5=1:gosub2020:goto1215
  1202 ifc%=153thengosub2055:goto1215
  1203 ifc%=154thener%=3:goto1215
  1204 ifc%=155thener%=3:goto1215
  1205 ifc%=156theni$=chr$(21):sysm%:goto1215
- 1206 ifc%=157thengosub2015:goto1215
+ 1206 ifc%=157thenf5=0:gosub2020:goto1215
  1207 ifc%=158thengosub1870:goto1215
  1208 ifc%=159thengosub2140:goto1215
  1209 ifc%=160thengosub2200:goto1215
@@ -94,12 +94,13 @@
  1219 gosub2920:ifc3%=0thengosub3315
  1220 goto1105:rem"while(true)
 
- 1230 x1$="extentions":gosub3365:i$=chr$(71)+chr$(c%):k2%=58
- 1231 sysm%+3:ifc%=k2%orc%=0goto1234
- 1232 ifc%=34thenk2%=34
- 1233 i$=i$+chr$(c%):goto1231
- 1234 ifc%=34thenk2%=58:goto1233
- 1235 i$=i$+":"+chr$(158)+"2082:":return
+ 1230 x1$="extentions":x0=x0+1:ify%=0thengosub3370
+ 1231 i$=chr$(71)+chr$(c%):k2%=58
+ 1232 sysm%+3:ifc%=k2%orc%=0goto1235
+ 1233 ifc%=34thenk2%=34
+ 1234 i$=i$+chr$(c%):goto1232
+ 1235 ifc%=34thenk2%=58:goto1234
+ 1236 i$=i$+":"+chr$(158)+"2082:":return
 
  1255 sysm%:rem let token
  1260 gosub2635:e$=chr$(asc(j$)or64)+mid$(j$,2):e2%=l2%:ifc%<>178thener%=1:return
@@ -152,14 +153,12 @@
  1540 ifc3%thener%=-1:return
  1545 ifc%<>44thener%=1:return
  1550 goto1520
- 1555 sysm%:gosub2635:j%=75:ifl2%thenj%=74
+ 1555 sysm%:gosub2635:j%=75:ifl2%thenj%=74:rem"do
  1560 ifasc(j$)=86thener%=3:return
  1565 iflen(j$)=1andl2%=0thenj$=chr$(160)+chr$(asc(j$)and31)
  1570 i$=i$+j$+chr$(j%):gosub2920:i$="":ifc3%thener%=-1:return
  1575 ifc%<>44thener%=1:return
- 1580 goto1555
- 1585 j%=25:goto1595
- 1590 j%=26
+ 1580 goto1555:rem"while(true)
  1595 sysm%
  1600 ifc%<48orc%>57thener%=1:return
  1605 gosub2895:f1=int(val(j1$)):iff1<0orf1>64000thener%=1:return
@@ -225,9 +224,6 @@
  1885 i$=i$+chr$(c%):sysm%:goto1880
  1890 i$=i$+chr$(58):return
 
- 1895 j%=93:goto1910
- 1900 j%=94:goto1910
- 1905 j%=95
  1910 e$=chr$(j%):f5=0:sysm%:ifc3%goto1955
  1915 gosub2270:ifl2%=0thener%=2:return
  1920 e$=i$+e$:f5=1:ifc3%goto1955
@@ -248,8 +244,6 @@
  1995 g1=g1*7+2:f=int(g1/256):j1%=g1-f*256:e$=e$+chr$(j1%)+chr$(f)
  2000 sysm%:ifc%<>178thener%=1:return
  2005 sysm%:gosub2270:j1%=len(i$):i$=e$+chr$(j1%+7)+i$+chr$(57):return
- 2010 f5=1:goto2020
- 2015 f5=0
  2020 sysm%:gosub2270:ifl2%thener%=2:return
  2025 ifc3%=0goto2040
  2030 j%=66:iff5thenj%=68
@@ -299,8 +293,8 @@
  2250 e$=i$+chr$(72):ifc%<>44thener%=1:return
  2255 goto2240
  2260 sysm%:ifc%<>164thener%=1:return
- 2265 goto1585
- 2270 i$="":i=0
+ 2265 j%=25:gosub1595:return
+ 2270 i$="":i=0:gosub2275:return
  2275 i%(i)=0:i2%(i)=fx:i=i+1:fx=-1
  2280 f8=0:gosub2405:iff8thensysm%:fx=l2%:goto2355
  2285 i$=i$+j$:i1=0:iffx>=0theniffx<>l2%thengosub3340:return
@@ -411,9 +405,9 @@
  2810 ifj1%<>(h1%(g1)and255)thenh1%(g1)=j1%orh1%(g1)and256:gosub3330
  2815 j1%=(g1+3)*2:ifj1%<254thenj$=chr$(164)+chr$(j1%+1):return
  2820 f=int(j1%/256):j1%=j1%-f*256:j$=chr$(165)+chr$(j1%)+chr$(f):return
- 2825 gosub2895:j$=j1$:ifc%=46thengosub2890:j$=j$+"."+j1$
+ 2825 gosub2895:j$=j1$:ifc%=46thensysm%:gosub2895:j$=j$+"."+j1$
  2830 ifc%<>69goto2845
- 2835 gosub2890:j$=j$+"e"+j1$:ifval(j1$)<39goto2845
+ 2835 sysm%:gosub2895:j$=j$+"e"+j1$:ifval(j1$)<39goto2845
  2840 gosub3335:j$=left$(j$,len(j$)-1)
  2845 f6=val(j$):f7=int(f6):iff6>32767orf6<-32767orf7<>f6goto2880
  2850 iff6<0orf6>31goto2865
@@ -424,7 +418,7 @@
  2875 f7=int(f6/256):j1%=f6-f7*256:j$=chr$(167)+chr$(f7)+chr$(j1%):return
  2880 z=f6:j$=chr$(168):f7=peek(45)+peek(46)*256+2
  2885 forf7=f7tof7+4:j$=j$+chr$(peek(f7)):next:j1%=f7:f7=f7-5:return
- 2890 sysm%
+
  2895 j1$="":ifc%<>170andc%<>171goto2910
  2900 ifc%=171thenj1$="-"
  2905 sysm%
@@ -532,7 +526,7 @@
  3350 x1=x1+1:x5=1:gosub3370
  3355 sysm%:ifc3%=0goto3355
  3360 return
- 3365 x0=x0+1:ify%thenreturn
+
  3370 printleft$(x$,5+x2);:printspc(x4);:print"?";:printx1$;:print" in";:printb1:open129,4
  3375 print#129,"?";:print#129,x1$;:print#129," in";:print#129,b1:close129
  3380 x2=x2+1:ifx2=18thenx4=x4+40:x2=0:ifx4>40thenx4=0
