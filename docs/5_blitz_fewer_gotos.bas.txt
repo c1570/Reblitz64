@@ -165,20 +165,27 @@
  1575 ifc%<>44thener%=1:return
  1580 goto1555:rem"while(true)
 
- 1595 sysm%
+ 1595 sysm%:gosub1600:return
+
  1600 ifc%<48orc%>57thener%=1:return
- 1605 gosub2895:f1=int(val(j1$)):iff1<0orf1>64000thener%=1:return
+ 1601 gosub1605:return
+
+ 1605 gosub2895:f1=int(val(j1$))
+ 1606 iff1<0orf1>64000thener%=1:return
+ 1607 gosub1610:return
+
  1610 f=f1:f1=int(f/256):j1%=f-f1*256:b%(b2%)=e%+1:b2%=b2%+1
  1615 i$=chr$(j%)+chr$(f1)+chr$(j1%):return
 
- 1620 i$=chr$(21):gosub2920:sysm%:j%=25:ifc3%thenf1=b4:goto1610
- 1625 goto1600
+ 1620 i$=chr$(21):gosub2920:sysm%:j%=25
+ 1621 ifc3%=0thengosub1600:return
+ 1622 f1=b4:gosub1610:return
 
- 1630 sysm%:gosub2270:ifc%=137thengosub2920:j%=82:goto1595
+ 1630 sysm%:gosub2270:ifc%=137thengosub2920:j%=82:gosub1595:return
  1635 ifc%<>167thener%=1:return
  1640 gosub2920:sysm%:ifc%=142theni$=chr$(88):sysm%:return
- 1645 ifc%=137thenj%=82:goto1595
- 1650 ifc%>47andc%<58thenj%=82:goto1605
+ 1645 ifc%=137thenj%=82:gosub1595:return
+ 1650 ifc%>47andc%<58thenj%=82:gosub1605:return
  1655 b%(b2%)=e%+1:b2%=b2%+1:i$=chr$(31)+chr$(255):gosub2920:i$=""
  1660 er%=-1:return
 
