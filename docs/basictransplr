@@ -174,7 +174,6 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
     line_has_if = False
     in_if_condition = False
     in_array_index = False
-    started_subroutine = False
     starting_token = -1
     line_contains_unconditional_branch = False
     line_number = data[0] + (data[1] << 8)
@@ -185,14 +184,15 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
         print(f"line {line_number} is target of both GOTO and GOSUB. Check/fix! {j_sources}")
     is_subroutine = min(jump_sources) < 0 if jump_sources is not None and len(jump_sources) > 0 else False
     txt = ""
+    pre_txts = []
     txts = []  # [f"line_{line_number}:"]
     if line_number in close_block_before:
-        txts.append(" }")
+        pre_txts.append(" }")
         close_block_before.remove(line_number)
     if j_sources != "" and min(jump_sources) < 0:
-        started_subroutine = True
+        pre_txts.insert(0, "}")
         target_s = labels["sub"].get(str(line_number), f"sub_{str(line_number)}")
-        txts = [f"\nfunction {target_s}(){{"]
+        pre_txts.append(f"\nfunction {target_s}(){{")
     if j_sources != "" and not reachable_implicitly and len(jump_sources) == 1 and "GOTO" in j_sources:
         print(f"line {line_number} is target of exactly one GOTO only. Inline or transform to if/then/else?")
     def get_var_id(var_name):
@@ -376,7 +376,7 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
             txts.append(" continue")
             txt = ""
         if 'DO' in flags:
-            txts.insert(0 if not started_subroutine else 1, " do {")
+            txts.insert(0, " do {")
             txt = ""
         if 'WHILE(TRUE)' in flags:
             txts.pop()
@@ -389,9 +389,7 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
     #else:
     #    if line_contains_unconditional_branch:
     #        txts.append("")
-    if started_subroutine:
-        txts.insert(0, "}")
-    return txts
+    return pre_txts + txts
 
 
 class Line:
