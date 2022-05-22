@@ -1,0 +1,524 @@
+#!/usr/bin/env python3
+
+# BASIC transplr. Transforms well-formed BASIC V2 to something weird.
+# https://github.com/c1570/Reblitz64
+
+import csv
+import os.path
+import re
+import sys
+
+input_file = sys.argv[1] if len(sys.argv) > 1 else "input.prg"
+output_file = "output.prg"
+output_txt_file = "output.txt"
+
+
+TOKENS = ["END", "FOR", "NEXT", "DATA", "INPUT", "INPUT#", "DIM", "READ",
+          "LET", "GOTO", "RUN", "if(", "RESTORE", "",  # GOSUB
+          "return", "REM", "STOP", "ON", "WAIT", "LOAD", "SAVE", "VERIFY", "DEF", "POKE",
+          "PRINT#", "PRINT", "CONT", "LIST", "CLR", "CMD", "SYS", "OPEN",
+          "CLOSE", "GET", "NEW", "TAB(", "TO", "FN", "SPC(", "THEN", "NOT",
+          "STEP", "+", "-", "*", "/", "^", "&&", "||", ">", "=", "<",
+          "SGN", "Math.floor", "Math.abs", "USR", "FRE", "POS", "SQR", "RND", "LOG",
+          "EXP", "COS", "SIN", "TAN", "ATN", "PEEK", "LEN", "STR$", "VAL",
+          "ASC", "CHR$", "LEFT$", "RIGHT$", "MID$", "GO"]
+TOK_TO_STR = {}
+val = 128
+for tok in TOKENS:
+    TOK_TO_STR[val] = tok
+    val += 1
+
+
+def prg_line_to_ascii(data: bytearray):
+    def convert(c):
+        return TOK_TO_STR[c] if c in TOK_TO_STR else chr(c)
+    res = ""
+    in_quotes = False
+    for c in data:
+        if c == 34:
+            in_quotes = not in_quotes
+        res += convert(c) if not in_quotes else chr(c)
+    return res
+
+
+class Element:
+    def __init__(self, data):
+        self.data = data
+
+    def get_bytes(self):
+        return self.data
+
+    def __str__(self):
+        return f"Element {self.data}"
+
+
+class ElementPrint(Element):
+    def __init__(self, data):
+        self.data = data
+        data = data.replace(b'""',
+                            b'')  # this replaces "" only in internal representation, will not get serialized later
+        self.is_constant = data[1:2] == b'"' and (data[-2:] == b'";' or data[-1:] == b'"') and b'"' not in data[2:-2]
+        if self.is_constant:
+            if data[-2:] == b'";':
+                self.constant = data[2:-2]
+            else:
+                self.constant = data[2:-1] + b'\x0d'
+
+    def __str__(self):
+        return f"PRINT {self.data}"
+
+
+class ElementSys(Element):
+    def __init__(self, data: bytearray = None, addr: int = None):
+        if data is not None:
+            self.data = data
+        elif addr is not None:
+            self.data = bytearray([158] + bytes(str(addr), "ascii"))
+        else:
+            assert False
+        self.is_sysq = False
+        self.is_simple_sysq = False
+        if self.data[1] != 0x51:
+            return
+        pars = self.data[1:].split(b',')
+        if len(pars) < 4:
+            return
+        self.is_sysq = pars[0] == b'Q'
+        self.sysq_pars = pars[1:3]
+        str_par = self.data[len(pars[0]) + len(pars[1]) + len(pars[2]) + 4:]
+        str_par = str_par.replace(b'""',
+                                  b'')  # this replaces "" only in internal representation, will not get serialized later
+        self.is_simple_sysq = self.is_sysq and str_par[0:1] == b'"' and (
+                    str_par[-2:] == b'";' or str_par[-1:] == b'"') and b'"' not in str_par[2:-2]
+        self.sysq_pars.append(str_par)
+        if self.is_simple_sysq:
+            if str_par[-2:] == b'";':
+                str_par = str_par[1:-2]
+            else:
+                str_par = str_par[1:-1] + b'\x0d'
+            self.constant = str_par
+            print(f"SIMPLE sysq_pars: {self.sysq_pars}")
+        else:
+            print(f"COMPLEX sysq_pars: {self.sysq_pars}")
+
+
+class ElementIf(Element):
+    pass
+
+
+def create_element(data):
+    if len(data) > 0:
+        if data[0] == 153:
+            return ElementPrint(data)
+        elif data[0] == 158:
+            return ElementSys(data)
+        elif data[0] == 139:
+            return ElementIf(data)
+    return Element(data)
+
+
+CTRLCODE_TO_TITLE = {
+    3: "run/stop",
+    5: "white",
+    8: "disable toggle charset",
+    9: "enable toggle charset",
+    13: "return",
+    14: "toggle charset",
+    17: "down",
+    18: "reverse on",
+    19: "home",
+    20: "del",
+    28: "red",
+    29: "right",
+    30: "green",
+    31: "blue",
+    129: "orange",
+    131: "shift run/stop",
+    133: "f1",
+    134: "f3",
+    135: "f5",
+    136: "f7",
+    137: "f2",
+    138: "f4",
+    139: "f6",
+    140: "f8",
+    141: "shift return",
+    142: "upper caps/graphics",
+    144: "black",
+    145: "up",
+    146: "reverse off",
+    147: "clear",
+    148: "insert",
+    149: "brown",
+    150: "light red",
+    151: "grey 1",
+    152: "grey 2",
+    153: "light green",
+    154: "light blue",
+    155: "grey 3",
+    156: "purple",
+    157: "left",
+    158: "yellow",
+    159: "cyan"
+}
+
+
+def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources: list = None, var_table: set = set(), reachable_implicitly = True, close_block_before: set = set()) -> str:
+    if len(data) <= 2:
+        return ""
+    in_data = False
+    in_quotes = False
+    in_rem = False
+    in_branch = False
+    in_gosub = False
+    line_has_if = False
+    in_if_condition = False
+    in_array_index = False
+    started_subroutine = False
+    starting_token = -1
+    line_contains_unconditional_branch = False
+    line_number = data[0] + (data[1] << 8)
+    var_name = bytearray()
+    branch_target = bytearray()
+    j_sources = ", ".join([f"GOTO from {j}" if j >= 0 else f"GOSUB from {abs(j)}" for j in jump_sources]) if jump_sources is not None else ""
+    if "GOTO" in j_sources and "GOSUB" in j_sources:
+        print(f"line {line_number} is target of both GOTO and GOSUB. Check/fix! {j_sources}")
+    is_subroutine = min(jump_sources) < 0 if jump_sources is not None and len(jump_sources) > 0 else False
+    txt = ""
+    txts = []  # [f"line_{line_number}:"]
+    if line_number in close_block_before:
+        txts.append(" }")
+        close_block_before.remove(line_number)
+    if j_sources != "" and min(jump_sources) < 0:
+        started_subroutine = True
+        target_s = labels["sub"].get(str(line_number), f"sub_{str(line_number)}")
+        txts = [f"\nfunction {target_s}(){{"]
+    if j_sources != "" and not reachable_implicitly and len(jump_sources) == 1 and "GOTO" in j_sources:
+        print(f"line {line_number} is target of exactly one GOTO only. Inline or transform to if/then/else?")
+    def get_var_id(var_name):
+        return "var_" + var_name.replace(" ", "_").replace("$", "str").replace("%", "int").replace("(", "arr")
+    def add_var_name_to_txt():
+        nonlocal txt, in_array_index
+        if len(var_name) > 0:
+            var_label = var_name.decode('ascii')
+            #print(f"Variable: {var_label}")
+            var_name.clear()
+            global labels
+            var_id = get_var_id(var_label)
+            var_title = labels["var"].get(var_label, "")
+            var_table.add(var_label)
+            if var_id.endswith("arr"):
+                txt = txt + f" {var_id}["
+                in_array_index = True
+            else:
+                txt = txt + f" {var_id} "
+    def add_branch_target_to_txt():
+        nonlocal txt, in_gosub
+        if len(branch_target) > 0:
+            target = int(branch_target.decode('ascii'))
+            #print(f"Branch target: {target}")
+            if in_gosub:
+                target_s = labels["sub"].get(str(target), f"sub_{str(target)}")
+                txt = txt + f" {target_s}() "
+                target = -target
+            else:
+                txt = txt + f"{target} "
+            branch_targets.append(target)
+            branch_target.clear()
+    def add_char_to_txt(c: int, detokenize: bool):
+        nonlocal txt, in_array_index
+        if c == 41 and in_array_index:
+            txt = txt + "]"  # wrong in case the index uses functions but who cares
+            in_array_index = False
+            return
+        if 31 < c < 91:
+            txt = txt + chr(c)
+        elif detokenize:
+            if c in TOK_TO_STR:
+                token = TOK_TO_STR[c]
+                if len(token) > 1:
+                    txt = txt + f" {token} "
+                else:
+                    txt = txt + token
+            else:
+                txt = txt + f"&#xEE{c:2x};"
+        else:
+            sc = ([0x80, 0x20, 0x00, 0x40, 0xC0, 0x60, 0x40, 0x60][c >> 5] + (c & 0x1f)) if c != 255 else 94
+            char = f"&#xEE{sc:2x};"
+            txt = txt + char
+
+    for c in data[2:]:
+        if in_branch and c > 127:
+            add_branch_target_to_txt()
+            in_branch = False
+            in_gosub = False
+        if not in_quotes and not in_data and not in_rem and c > 127:
+            if c == 137 and not starting_token == 145:  # GOTO but not ON...GOTO
+                line_contains_unconditional_branch = True
+            if c == 128:  # END
+                line_contains_unconditional_branch = True
+            if c == 142:  # RETURN
+                line_contains_unconditional_branch = True
+            if starting_token == -1:
+                starting_token = c
+
+        if in_quotes or c == 34:  # "
+            if c == 34:
+                add_var_name_to_txt()
+                in_quotes = not in_quotes
+            add_char_to_txt(c, False)
+        elif in_data:
+            starting_token = -1
+            if c == 58:  # :
+                in_data = False
+                txts.append(txt)
+                txt = ""
+                continue
+            add_char_to_txt(c, False)
+        elif in_rem:
+            add_char_to_txt(c, True)
+            continue
+        elif c == 131:  # DATA
+            add_var_name_to_txt()
+            add_char_to_txt(c, True)
+            in_data = True
+        elif c == 143:  # REM
+            add_var_name_to_txt()
+            add_char_to_txt(c, True)
+            in_rem = True
+        elif c in [137, 138, 141, 155, 167]:  # GOTO, RUN, GOSUB, LIST, THEN
+            add_var_name_to_txt()
+            in_gosub = c == 141
+            in_branch = True
+            if in_if_condition:
+                txts.append(txt + ") {")
+                txt = ""
+                in_if_condition = False
+            if c != 167:
+                add_char_to_txt(c, True)
+        elif c == 40:  # (
+            if len(var_name) > 0:
+                var_name.append(c)
+                add_var_name_to_txt()
+            else:
+                add_char_to_txt(c, True)
+        elif (64 < c < 91) and len(var_name) == 0:  # A..Z
+            add_branch_target_to_txt()
+            in_branch = False
+            in_gosub = False
+            var_name.append(c)
+        elif (64 < c < 91) or (47 < c < 58) and len(var_name) > 0:  # A..Z0..9
+            if var_name[-1] in [36, 37]:  # %, $
+                add_var_name_to_txt()
+            var_name.append(c)
+        elif (47 < c < 58) and in_branch:
+            branch_target.append(c)
+        elif (c in [36, 37]) and len(var_name) > 0:  # %, $
+            var_name.append(c)
+            add_branch_target_to_txt()
+        elif c == 32:  # spaces are not significant but possibly _important_ ("F N")
+            if len(var_name) > 0:
+                var_name.append(c)
+            continue
+        else:
+            if in_branch:
+                if c == 44:  # ,
+                    add_branch_target_to_txt()
+                elif c == 58:  # :
+                    add_branch_target_to_txt()
+                    in_branch = False
+                    in_gosub = False
+            add_var_name_to_txt()
+            if in_if_condition:
+                if c == 178 and not txt.endswith("<") and not txt.endswith(">"):  # = token
+                    txt = txt + "=="
+                    continue
+                if c == 177:  # > token
+                    if txt.endswith("<"):
+                        txt = txt[:-1] + "!="
+                        continue
+            if c == 58:  # :
+                starting_token = -1
+                txts.append(txt)
+                txt = ""
+                continue
+            elif c == 139:  # IF
+                line_has_if = True
+                in_if_condition = True
+            add_char_to_txt(c, True)
+
+    # flush everything
+    add_var_name_to_txt()
+    add_branch_target_to_txt()
+    if 'REM "' in txt:
+        flags = re.search('REM "(.*)', txt).group(1).split(",")
+        if 'ELSEIF' in flags:
+            txts.pop()  # remove the GOTO
+            txts.append(" } else")
+            txt = ""
+            line_has_if = False
+            line_contains_unconditional_branch = False
+        if 'ELSE' in flags:
+            goto_line = txts.pop()  # remove the GOTO
+            print(f"REMELSE: {txt}, {goto_line}")
+            goto_target = re.search('GOTO (\d*)', goto_line).group(1)
+            txts.append(" } else {")
+            txt = ""  # ignore the REM
+            line_has_if = False
+            line_contains_unconditional_branch = False
+            close_block_before.add(int(goto_target))
+        if 'BREAK' in flags:
+            txts.pop()
+            txts.append(" break")
+            txt = ""
+        if 'CONTINUE' in flags:
+            txts.pop()  # remove last GOTO
+            txts.append(" continue")
+            txt = ""
+        if 'DO' in flags:
+            txts.insert(0 if not started_subroutine else 1, " do {")
+            txt = ""
+        if 'WHILE(TRUE)' in flags:
+            txts.pop()
+            txts.append(" } while(true)")
+            txt = ""
+    if txt != "":
+        txts.append(txt)
+    if line_has_if:
+        txts.append(" }")
+    #else:
+    #    if line_contains_unconditional_branch:
+    #        txts.append("")
+    if started_subroutine:
+        txts.insert(0, "}")
+    return txts
+
+
+class Line:
+    def __init__(self, data):
+        self.number = data[0] + (data[1] << 8)
+        self.elements = []
+        data = data[2:]
+        #print(f"{self.number} {prg_line_to_ascii(data)} --- {data}")
+        off = 0
+        in_quotes = False
+        in_data = False
+        while off < len(data):
+            if data[off] == 34:  # "
+                in_quotes = not in_quotes
+            elif data[off] == 131:  # DATA
+                in_data = True
+            elif data[off] == 58:  # :
+                if not in_quotes:
+                    self.elements.append(create_element(data[:off]))
+                    self.elements.append(create_element(data[off:off + 1]))  # TODO should include whitespace here
+                    data = data[off + 1:]
+                    in_data = False
+                    off = -1
+            elif data[off] == 167:  # THEN
+                if not in_quotes and not in_data:
+                    self.elements.append(create_element(data[:off + 1]))
+                    data = data[off + 1:]
+                    off = -1
+            off += 1
+        if len(data) > 0:
+            self.elements.append(create_element(data))
+
+    def get_bytes(self, branch_table=[]):
+        out = bytearray([self.number & 255, (self.number >> 8) & 255])
+        empty_line = True
+        for el in self.elements:
+            el_bytes = bytes(el.get_bytes())
+            if el_bytes != b':' and el_bytes != b'':
+                empty_line = False
+            out.extend(el_bytes)
+        if empty_line:
+            if self.number in branch_table and len(branch_table[self.number]) > 0:
+              print(f"{self.number} is in branch_table! len(out) is {len(out)}")
+              if len(out) == 2:
+                  out.extend(b'\x8f')  # all elements got removed but line is target of a branch: add REM
+            else:
+              return bytearray()  # empty line that's not target of a branch: just ignore
+        out.extend(b'\00')
+        return out
+
+    def __str__(self):
+        return f"{self.number} {prg_line_to_ascii(self.get_bytes()[2:-1])} --- {len(self.elements)} elements"
+
+
+class Program:
+    def __init__(self, data):
+        self.startaddr = data[0] + (data[1] << 8)
+        self.lines = []
+        curoff = 2
+        while curoff < len(data):
+            if data[curoff] == 0 and data[curoff + 1] == 0:
+                return
+            line_data = data[curoff + 2:]
+            line_data = line_data[0:line_data[2:].find(b'\x00') + 2]
+            # print(line_data)
+            self.lines.append(Line(line_data))
+            curoff += len(line_data) + 3
+
+    def get_bytes(self, branch_table=[]):
+        outprg = bytearray([self.startaddr & 255, (self.startaddr >> 8) & 255])
+        curadr = self.startaddr
+        for line in self.lines:
+            line_bytes = line.get_bytes(branch_table)
+            if len(line_bytes) == 0:
+                continue
+            curadr += len(line_bytes) + 2
+            outprg.append(curadr & 255)
+            outprg.append((curadr >> 8) & 255)
+            outprg.extend(line_bytes)
+        outprg.extend([0, 0])
+        return outprg
+
+    def __str__(self):
+        return f"Program with {len(self.lines)} lines"
+
+
+def analyze_program(program: Program) -> (dict, str, set):
+    line_number_to_jump_source = dict()
+    var_table = set()
+    for line in program.lines:
+        branch_targets = []
+        get_var_branch_info(line.get_bytes()[:-1],
+                            branch_targets=branch_targets,
+                            var_table=var_table)
+        for target in branch_targets:
+            sources = line_number_to_jump_source.setdefault(abs(target), [])
+            sources.append(line.number if target >= 0 else -line.number)
+    reachable_implicitly = True
+    lines_as_txt = ["function main() {"]
+    close_block_before = set()
+    for line in program.lines:
+        line_txt = get_var_branch_info(line.get_bytes()[:-1],
+                                       jump_sources=line_number_to_jump_source.setdefault(line.number, []),
+                                       close_block_before=close_block_before,
+                                       reachable_implicitly=reachable_implicitly)
+        reachable_implicitly = len(line_txt) > 0 and not (line_txt[-1] == "")
+        lines_as_txt.extend(line_txt)
+    return line_number_to_jump_source, "\n".join(lines_as_txt), var_table
+
+
+with open(input_file, "rb") as infile:
+    inprg = bytes(infile.read())
+labels = {"var": {}, "sub": {}}
+if os.path.isfile("labels.csv"):
+    with open("labels.csv", newline="") as csvfile:
+        csvreader = csv.reader(csvfile, delimiter=',')
+        for row in csvreader:
+            if row[2] != "":
+                labels[row[0]][row[1]] = row[2]
+input_program = Program(inprg)
+branch_table, output_txt, var_table = analyze_program(input_program)
+#crank_the_print(input_program, branch_table)
+#outprg = input_program.get_bytes(branch_table)
+#with open(output_file, "wb") as outfile:
+#    outfile.write(outprg)
+with open(output_txt_file, "w") as outfile:
+    outfile.write(output_txt+"\n}\n")
+
+print("\n\nCheck:")
+print("'var_XXint = Y' => 'var_XXint = Math.floor(Y)'")
