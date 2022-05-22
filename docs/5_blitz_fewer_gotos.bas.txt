@@ -34,19 +34,15 @@
  1099 print"{home}pass1"
  1100 c%=0:c2%=1:e%=0:x0=0:ift%<4ort2%=0theni$=chr$(21):gosub2920
 
- 1105 ifc2%=0thengoto1135:rem"do,else
+ 1105 i$="":i=0:er%=0:ifc2%=0thengoto1135:rem"do,else
  1106 sysm%+86:ifc4%=0thenreturn
- 1110 b1=asc(mid$(z$,3))+asc(mid$(z$,4))*256:d%(b5%)=b1-32767
- 1115 c%(b5%)=e%:b5%=b5%+1:c1%=3:print"{home}{down}";:printb1
+ 1107 c1%=3
+ 1110 b1=asc(mid$(z$,3))+asc(mid$(z$,4))*256
+ 1111 print"{home}{down}";:printb1
+ 1115 d%(b5%)=b1-32767:c%(b5%)=e%:b5%=b5%+1
  1120 ifb3%=0thenb4=b1:b3%=1
- 1125 sysm%:i$="":i=0:er%=0:ifc2%=0andc3%>0goto1150:rem TODO
- 1135 i$="":i=0:er%=0:ifc3%=0goto1175
- 1140 sysm%:ifc2%goto1105:rem"continue
- 1145 ifc3%=0goto1175
- 1150 sysm%:ifc2%goto1105:rem"continue
- 1155 ifc3%=0goto1175
- 1160 sysm%:ifc2%orc3%goto1105:rem"continue
- 1170 gosub1230:goto1215
+ 1130 sysm%:ifc2%goto1105:rem"continue
+ 1135 ifc3%thensysm%:goto1105:rem"continue
  1175 x5=0:ifc%<128and(c%<65orc%>90)thengosub1230:goto1215:rem"elseif
  1176 ifc%>64andc%<91thengosub1260:goto1215:rem"elseif
  1177 ifc%=128theni$=chr$(79):sysm%:goto1215:rem"elseif
