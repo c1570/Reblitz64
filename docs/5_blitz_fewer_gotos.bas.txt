@@ -93,11 +93,12 @@
 
  1230 x1$="extentions":x0=x0+1:ify%=0thengosub3370
  1231 i$=chr$(71)+chr$(c%):k2%=58
- 1232 sysm%+3:ifc%=k2%orc%=0goto1235
- 1233 ifc%=34thenk2%=34
- 1234 i$=i$+chr$(c%):goto1232
- 1235 ifc%=34thenk2%=58:goto1234
- 1236 i$=i$+":"+chr$(158)+"2082:":return
+ 1232 sysm%+3:rem"do
+ 1233 ifc%=k2%orc%=0goto1236:rem"else
+ 1234 ifc%=34thenk2%=34
+ 1235 i$=i$+chr$(c%):goto1232:rem"continue
+ 1236 ifc%<>34theni$=i$+":"+chr$(158)+"2082:":return
+ 1237 k2%=58:i$=i$+chr$(c%):goto1232:rem"while(true)
 
  1255 sysm%:gosub1260:return:rem let token
 
@@ -111,7 +112,7 @@
  1350 i$=i$+e$:ifc%<>164thener%=1:return
  1355 gosub2920:e$=e1$:iflen(e$)=1thene$=chr$(160)+chr$(asc(e$)and31)
  1360 sysm%:gosub2270:ifl2%<>e2%thener%=2:return
- 1365 e1$=i$:ifc%<>169thene$=e$+chr$(17):goto1375
+ 1365 e1$=i$:ifc%<>169thene$=e$+chr$(17):goto1375:rem"else
  1370 e$=e$+chr$(18):sysm%:gosub2270:e1$=e1$+i$:ifl2%<>e2%thener%=2:return
  1375 i$=e1$+e$:return
 
@@ -122,14 +123,15 @@
  1400 sysm%:goto1385:rem"while(true)
 
  1405 ifk%=0thenclose5:open5,r1%,5,y$+":d/"+a1$+",s,w"
- 1410 k1%=0:k$="":sysm%:k2%=58:k3%=44:goto1420
- 1415 sysm%+3
- 1420 ifc%=k2%orc%=k3%orc%=0goto1435
- 1425 ifc%=34thenk2%=0:k3%=34:goto1415
- 1430 k1%=k1%+1:k$=k$+chr$(c%):goto1415
- 1435 ifc%=34thenk2%=58:k3%=44:goto1415
- 1440 print#5,chr$(k1%);:print#5,k$;:k%=k%+k1%+1:ifc%=44goto1410
- 1445 er%=-1:return
+ 1410 k1%=0:k$="":sysm%:k2%=58:k3%=44:rem"do
+ 1420 ifc%=k2%orc%=k3%orc%=0goto1435:rem"do,else
+ 1425 ifc%=34thenk2%=0:k3%=34:sysm%+3:goto1420:rem"continue
+ 1430 k1%=k1%+1:k$=k$+chr$(c%):sysm%+3:goto1420:rem"continue
+ 1435 ifc%<>34thengoto1440:rem"break
+ 1436 k2%=58:k3%=44:sysm%+3:goto1420:rem"while(true)
+ 1440 print#5,chr$(k1%);:print#5,k$;:k%=k%+k1%+1
+ 1441 ifc%<>44thener%=-1:return
+ 1445 goto1410:rem"while(true)
 
  1450 sysm%:gosub2270:ifl2%thener%=2:return
  1455 i$=i$+chr$(72):ifc%<>44thener%=1:return
@@ -141,20 +143,20 @@
 
  1480 gosub2920:i$="":gosub2635:j%=83:ifasc(j$)=86thener%=3:return
  1485 iflen(j$)=1andl2%=0thenj$=chr$(160)+chr$(asc(j$)and31)
- 1490 ifc%<>44theni$=i$+j$+chr$(j%):return
+ 1490 ifc%<>44theni$=i$+j$+chr$(j%):return:rem"do
  1495 j%=j%+2:i$=i$+j$+chr$(j%):gosub2920:i$="":sysm%:gosub2635:j%=81
  1500 ifasc(j$)=86thener%=3:return
  1505 iflen(j$)=1andl2%=0thenj$=chr$(160)+chr$(asc(j$)and31)
- 1510 ifc%<>44goto1490
- 1515 j%=j%+4:goto1495
+ 1510 ifc%=44thenj%=j%+4
+ 1515 goto1490:rem"while(true)
 
- 1520 sysm%:h1=-1:i$="":gosub2635:ifh1<0goto1540
+ 1520 sysm%:h1=-1:i$="":gosub2635:ifh1<0goto1540:rem"do,else
  1525 j1%=h1%(h1)and255:h1%(h1)=j1%:i$=i$+chr$(16)+chr$(j1%)+f$
  1530 g1=h1*2+7:f=int(g1/256):j1%=g1-f*256:i$=i$+chr$(f)+chr$(j1%)
  1535 gosub2920
  1540 ifc3%thener%=-1:return
  1545 ifc%<>44thener%=1:return
- 1550 goto1520
+ 1550 goto1520:rem"while(true)
 
  1555 sysm%:gosub2635:j%=75:ifl2%thenj%=74:rem"do
  1560 ifasc(j$)=86thener%=3:return
