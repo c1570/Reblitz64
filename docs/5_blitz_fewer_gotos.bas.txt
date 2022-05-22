@@ -15,8 +15,8 @@
  1044 end
 
  1056 rem"do
- 1057 gosub1092:rem pass1
- 1058 gosub2930:rem pass2
+ 1057 gosub1092
+ 1058 gosub2930
  1060 ift%=1thenreturn
  1065 gosub3605:ift3%=0andt8%=0thenreturn
  1066 ift3%=0thent8%=0:gosub3600:goto1068:rem"else
@@ -100,7 +100,7 @@
  1236 ifc%<>34theni$=i$+":"+chr$(158)+"2082:":return
  1237 k2%=58:i$=i$+chr$(c%):goto1232:rem"while(true)
 
- 1255 sysm%:gosub1260:return:rem let token
+ 1255 sysm%:gosub1260:return
 
  1260 gosub2635:e$=chr$(asc(j$)or64)+mid$(j$,2):e2%=l2%:ifc%<>178thener%=1:return
  1265 sysm%:gosub2275:ifl2%<>e2%thener%=2:return
@@ -189,58 +189,60 @@
  1655 b%(b2%)=e%+1:b2%=b2%+1:i$=chr$(31)+chr$(255):gosub2920:i$=""
  1660 er%=-1:return
 
- 1665 sysm%:ifc2%thener%=-1:return:rem rem token
- 1670 ifc%=42goto1685
- 1675 sysm%:ifc2%=0goto1675
- 1680 er%=-1:return
- 1685 sysm%:ifc2%thener%=-1:return
- 1690 ifc%<>42goto1675
+ 1665 sysm%:ifc2%thener%=-1:return
+ 1670 ifc%<>42goto1777:rem"else
+ 1675 sysm%:ifc2%thener%=-1:return:rem"do
+ 1690 ifc%<>42goto1777:rem"break
  1695 sysm%:ifc2%thener%=-1:return
- 1700 ifc%=69theny%=1:goto1675
- 1705 ifc%<>73andc%<>83goto1675
+ 1700 ifc%=69theny%=1:goto1777:rem"break
+ 1705 ifc%<>73andc%<>83goto1777:rem"break
  1710 j%=89:ifc%=73thenj%=91
  1715 sysm%:ifc2%thener%=-1:return
- 1720 ifc%=69goto1730
- 1725 j%=j%+1:ifc%<>65goto1740
- 1730 i$=chr$(j%)
- 1735 gosub2920:goto1675
- 1740 ifc%<>80goto1675:rem rem**sp00000
- 1745 forf=1to5:sysm%:j%=c%-48:ifj%<0orj%>9goto1675
+ 1720 ifc%=69theni$=chr$(j%):gosub2920:goto1777:rem"break
+ 1725 ifc%=65theni$=chr$(j%+1):gosub2920:goto1777:rem"break
+ 1740 ifc%<>80goto1777:rem"break
+ 1741 rem rem**sp00000
+ 1745 forf=1to5:sysm%:j%=c%-48:ifj%<0orj%>9goto1777:rem"break
  1750 i%(f)=j%
  1751 next
- 1752 f=2^(i%(1)+i%(2)-i%(3)):iff>255goto1675
+ 1752 f=2^(i%(1)+i%(2)-i%(3)):iff>255goto1777:rem"break
  1755 f1=71:j1%=2^(i%(4)+i%(5)-4):ifj1%<8thenf1=113
- 1760 ifj1%>255goto1675
+ 1760 ifj1%>255goto1777:rem"break
  1765 i$=chr$(166)+chr$(f)+chr$(167)+chr$(2)+chr$(2)+chr$(23)+chr$(166)
  1770 i$=i$+chr$(f1)+chr$(167)+chr$(2)+chr$(1)+chr$(23)+chr$(166)+chr$(j1%)
- 1775 i$=i$+chr$(179)+chr$(23)+chr$(84)
- 1776 goto1735
+ 1774 i$=i$+chr$(179)+chr$(23)+chr$(84)
+ 1775 gosub2920:goto1777:rem"break
+ 1776 goto1776:rem"while(true)
+ 1777 sysm%:ifc2%thener%=-1:return:rem"do
+ 1778 goto1777:rem"while(true)
 
  1780 sysm%:gosub2270:ifl2%thener%=2:return
- 1785 j%=28:ifc%=137thenj%=27:goto1795
+ 1785 j%=28:ifc%=137thenj%=27:goto1795:rem"else
  1790 ifc%<>141thener%=1:return
  1795 gosub2920:i$=chr$(j%):j%=0:j$=""
- 1800 sysm%:gosub2895:f1=int(val(j1$)):iff1<0orf1>64000thener%=1:return
+ 1800 sysm%:gosub2895:f1=int(val(j1$)):iff1<0orf1>64000thener%=1:return:rem"do
  1805 f=f1:f1=int(f/256):j1%=f-f1*256:j%=j%+2
  1810 j$=j$+chr$(f1)+chr$(j1%):b%(b2%)=e%+j%:b2%=b2%+1
- 1815 ifc%=44goto1800
- 1820 i$=i$+chr$(j%+2)+j$:return
+ 1815 ifc%<>44theni$=i$+chr$(j%+2)+j$:return
+ 1820 goto1800:rem"while(true)
 
  1825 sysm%:gosub2270:e$=i$:ifc%<>44thener%=1:return
  1830 ifl2%thener%=2:return
  1835 sysm%:gosub2270:e$=i$+e$:ifl2%thener%=2:return
- 1840 j%=77:ifc3%thenj%=76:goto1855
+ 1840 ifc3%theni$=e$+chr$(76):return
+ 1841 j%=77:gosub1845:return
+
  1845 ifc%<>44thener%=1:return
  1850 sysm%:gosub2270:e$=i$+e$:ifl2%thener%=2:return
  1855 i$=e$+chr$(j%):return
 
  1860 j%=23:sysm%:gosub2270:e$=i$:ifl2%thener%=2:return
- 1865 goto1845
+ 1865 gosub1845:return
 
- 1870 sysm%:gosub2270:ifl2%thener%=2:return:rem sys token
+ 1870 sysm%:gosub2270:ifl2%thener%=2:return
  1875 i$=i$+chr$(24)
- 1880 ifc3%goto1890
- 1885 i$=i$+chr$(c%):sysm%:goto1880
+ 1880 ifc3%goto1890:rem"do,break
+ 1885 i$=i$+chr$(c%):sysm%:goto1880:rem"while(true)
  1890 i$=i$+chr$(58):return
 
  1910 e$=chr$(j%):f5=0:sysm%:ifc3%goto1955

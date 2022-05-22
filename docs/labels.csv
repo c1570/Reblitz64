@@ -123,7 +123,7 @@ sub,1605,parse_branch_target2
 sub,1610,add_branch_target_to_pcode
 sub,1620,p1_run
 sub,1630,p1_if
-sub,1665,p1_return
+sub,1665,p1_rem
 sub,1780,p1_on
 sub,1825,p1_wait
 sub,1860,p1_poke
