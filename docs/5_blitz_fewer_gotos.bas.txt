@@ -476,7 +476,7 @@
  3050 print#15,"s"+y$+":"+a2$:open3,r1%,3,y$+":"+a2$+",p,w":gosub3305
  3055 ift%<3ort2%=0goto3065
  3060 f=t1%+1:gosub3300:c%=f:goto3070
- 3065 open7,r1%,7,"runtime,p,r":forf=2047tot1%:get#7,c$:ifc$=""thenc$=chr$(0)
+ 3065 open7,r%,7,"runtime,p,r":forf=2047tot1%:get#7,c$:ifc$=""thenc$=chr$(0)
  3066 print#3,c$;:next:close7:c%=f
  3070 f=c%+13+h1+k%+e%:ift%=4thenf=c%+13+h1+t7%
  3075 gosub3300:f=f+g*7:gosub3300:gosub3300:f=c%+12:gosub3300:f=f+h1
@@ -546,8 +546,7 @@
  3355 sysm%:ifc3%=0goto3355
  3360 return
 
- 3370 printleft$(x$,5+x2);:printspc(x4);:print"?";:printx1$;:print" in";:printb1:open129,4
- 3375 print#129,"?";:print#129,x1$;:print#129," in";:print#129,b1:close129
+ 3370 printleft$(x$,5+x2);:printspc(x4);:print"?";:printx1$;:print" in";:printb1
  3380 x2=x2+1:ifx2=18thenx4=x4+40:x2=0:ifx4>40thenx4=0
  3385 return
 
