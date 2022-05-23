@@ -21,7 +21,7 @@ TOKENS = ["END", "FOR", "NEXT", "DATA", "INPUT", "INPUT#", "DIM", "READ",
           "STEP", "+", "-", "*", "/", "^", "&&", "||", ">", "=", "<",
           "SGN", "Math.floor", "Math.abs", "USR", "FRE", "POS", "SQR", "RND", "LOG",
           "EXP", "COS", "SIN", "TAN", "ATN", "PEEK", "LEN", "STR$", "VAL",
-          "ASC", "CHR$", "LEFT$", "RIGHT$", "MID$", "GO"]
+          "ASC", "String.fromCharCode", "LEFT$", "RIGHT$", "MID$", "GO"]
 TOK_TO_STR = {}
 val = 128
 for tok in TOKENS:
@@ -163,7 +163,7 @@ CTRLCODE_TO_TITLE = {
 }
 
 
-def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources: list = None, var_table: set = set(), reachable_implicitly = True, close_block_before: set = set()) -> str:
+def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources: list = None, var_table: set = set(), reachable_implicitly = True, close_block_before: list = list()) -> str:
     if len(data) <= 2:
         return ""
     in_data = False
@@ -171,7 +171,7 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
     in_rem = False
     in_branch = False
     in_gosub = False
-    line_has_if = False
+    line_if_clauses = 0
     in_if_condition = False
     in_array_index = False
     starting_token = -1
@@ -186,7 +186,7 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
     txt = ""
     pre_txts = []
     txts = []  # [f"line_{line_number}:"]
-    if line_number in close_block_before:
+    while line_number in close_block_before:
         pre_txts.append(" }")
         close_block_before.remove(line_number)
     if j_sources != "" and min(jump_sources) < 0:
@@ -343,7 +343,7 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
                 txt = ""
                 continue
             elif c == 139:  # IF
-                line_has_if = True
+                line_if_clauses += 1
                 in_if_condition = True
             add_char_to_txt(c, True)
 
@@ -353,39 +353,53 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
     if 'REM "' in txt:
         flags = re.search('REM "(.*)', txt).group(1).split(",")
         if 'ELSEIF' in flags:
-            txts.pop()  # remove the GOTO
+            assert "GOTO" in txts.pop()
             txts.append(" } else")
             txt = ""
-            line_has_if = False
+            assert line_if_clauses == 1
+            line_if_clauses = 0
             line_contains_unconditional_branch = False
         if 'ELSE' in flags:
-            goto_line = txts.pop()  # remove the GOTO
+            goto_line = txts.pop()
+            assert "GOTO" in goto_line
             print(f"REMELSE: {txt}, {goto_line}")
             goto_target = re.search('GOTO (\d*)', goto_line).group(1)
             txts.append(" } else {")
             txt = ""  # ignore the REM
-            line_has_if = False
+            line_if_clauses -= 1
             line_contains_unconditional_branch = False
-            close_block_before.add(int(goto_target))
+            close_block_before.append(int(goto_target))
+        if 'IFBEGIN' in flags:
+            goto_line = txts.pop()  # remove the GOTO
+            assert "GOTO" in goto_line
+            if_line = txts.pop()
+            assert if_line.startswith(" if"), "IFBEGIN only supports the IF...GOTO pattern"
+            txt = ""
+            if_line = f"if(!{if_line[3:].replace(') {', ')) {')}"
+            print(f"IFBEGIN: {if_line}")
+            assert line_if_clauses == 1
+            line_if_clauses = 0
+            txts.append(if_line)
         if 'BREAK' in flags:
-            txts.pop()
+            assert "GOTO" in txts.pop()
             txts.append(" break")
             txt = ""
         if 'CONTINUE' in flags:
-            txts.pop()  # remove last GOTO
+            assert "GOTO" in txts.pop()
             txts.append(" continue")
             txt = ""
         if 'DO' in flags:
             txts.insert(0, " do {")
             txt = ""
         if 'WHILE(TRUE)' in flags:
-            txts.pop()
+            assert "GOTO" in txts.pop()
             txts.append(" } while(true)")
             txt = ""
     if txt != "":
         txts.append(txt)
-    if line_has_if:
+    while line_if_clauses > 0:
         txts.append(" }")
+        line_if_clauses -= 1
     #else:
     #    if line_contains_unconditional_branch:
     #        txts.append("")
@@ -489,7 +503,7 @@ def analyze_program(program: Program) -> (dict, str, set):
             sources.append(line.number if target >= 0 else -line.number)
     reachable_implicitly = True
     lines_as_txt = ["function main() {"]
-    close_block_before = set()
+    close_block_before = list()
     for line in program.lines:
         line_txt = get_var_branch_info(line.get_bytes()[:-1],
                                        jump_sources=line_number_to_jump_source.setdefault(line.number, []),
