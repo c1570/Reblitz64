@@ -245,16 +245,17 @@
  1885 i$=i$+chr$(c%):sysm%:goto1880:rem"while(true)
  1890 i$=i$+chr$(58):return
 
- 1910 e$=chr$(j%):f5=0:sysm%:ifc3%goto1955
+ 1910 e$=chr$(j%):f5=0:sysm%:ifc3%goto1955:rem"else
  1915 gosub2270:ifl2%=0thener%=2:return
- 1920 e$=i$+e$:f5=1:ifc3%goto1955
+ 1920 e$=i$+e$:f5=1:ifc3%goto1955:rem"else
  1925 ifc%<>44thener%=1:return
  1930 sysm%:gosub2270:ifl2%thener%=2:return
- 1935 e$=i$+e$:f5=2:ifc3%goto1955
+ 1935 e$=i$+e$:f5=2:ifc3%goto1955:rem"else
  1940 ifc%<>44thener%=1:return
  1945 sysm%:gosub2270:ifl2%thener%=2:return
  1950 e$=i$+e$:f5=3
  1955 i$=e$+chr$(f5):return
+
  1960 sysm%:ifc%<>165thener%=1:return
  1965 fa=1:sysm%:f1%=c%or128:f4=1:gosub2645:ifc%<>40orl3%>0thener%=1:return
  1970 ifl2%thener%=2:return
@@ -265,83 +266,101 @@
  1995 g1=g1*7+2:f=int(g1/256):j1%=g1-f*256:e$=e$+chr$(j1%)+chr$(f)
  2000 sysm%:ifc%<>178thener%=1:return
  2005 sysm%:gosub2270:j1%=len(i$):i$=e$+chr$(j1%+7)+i$+chr$(57):return
+
  2020 sysm%:gosub2270:ifl2%thener%=2:return
- 2025 ifc3%=0goto2040
- 2030 j%=66:iff5thenj%=68
- 2035 i$=i$+chr$(j%):return
+ 2025 ifc3%thengosub2051:return
  2040 ifc%<>44thener%=1:return
- 2045 sysm%:ifc3%goto2030
- 2050 i$=i$+chr$(66):gosub2920:goto2060
+ 2045 sysm%:ifc3%thengosub2051:return
+ 2050 i$=i$+chr$(66):gosub2920:gosub2060:return
+
+ 2051 j%=66:iff5thenj%=68
+ 2052 i$=i$+chr$(j%):return
+
  2055 f5=0:sysm%:ifc3%theni$=chr$(63):return
- 2060 i$="":ifc%=163thene$=chr$(65):goto2075
- 2065 ifc%<>166goto2085
- 2070 e$=chr$(64)
- 2075 sysm%:gosub2270:ifc%<>41thenreturn
- 2080 i$=i$+e$:gosub2920:goto2090
- 2085 ifc%<>59goto2100
- 2090 sysm%:ifc3%goto2130
- 2095 goto2060
- 2100 ifc%=44thene$=chr$(59):goto2080
- 2105 gosub2270:ifc3%goto2120
- 2110 ifc%=44thene$=chr$(61):goto2080
- 2115 i$=i$+chr$(60):gosub2920:i$="":goto2060
- 2120 j%=62:iff5thenj%=67
- 2125 i$=i$+chr$(j%):return
- 2130 iff5theni$=chr$(69):return
- 2135 er%=-1:return
+ 2056 gosub2060:return
+
+ 2060 j%=0
+ 2061 i$="":rem"do
+ 2062 ifj%=0andc%=163thenj%=65
+ 2065 ifj%=0andc%<>163andc%<>166andc%<>59goto2100:rem"else
+ 2066 ifj%=0andc%<>163andc%<>166andc%=59goto2090:rem"else
+ 2075 ifj%=65orj%=0thensysm%:gosub2270:ifc%<>41thenreturn
+ 2076 ifj%=0thenj%=64
+ 2081 i$=i$+chr$(j%):gosub2920
+ 2090 sysm%:ifc3%=0thenj%=0:goto2061:rem"continue
+ 2091 iff5theni$=chr$(69):return
+ 2092 er%=-1:return
+
+ 2100 ifc%=44thenj%=59:goto2061:rem"continue
+ 2105 gosub2270:ifc3%=0goto2110:rem"else
+ 2106 j%=62:iff5thenj%=67
+ 2107 i$=i$+chr$(j%):return
+ 2110 ifc%=44thenj%=61:goto2061:rem"continue
+ 2115 i$=i$+chr$(60):gosub2920:j%=0:goto2061:rem"while(true)
+
  2140 sysm%:f5=1:gosub2270:ifl2%thener%=2:return
- 2145 e$=i$+chr$(96):ifc3%goto2195
+ 2145 e$=i$+chr$(96):ifc3%goto2195:rem"else
  2150 ifc%<>44thener%=1:return
  2155 sysm%:gosub2270:ifl2%thener%=2:return
- 2160 f5=2:e$=i$+e$:ifc3%goto2195
+ 2160 f5=2:e$=i$+e$:ifc3%goto2195:rem"else
  2165 ifc%<>44thener%=1:return
  2170 sysm%:gosub2270:ifl2%thener%=2:return
- 2175 f5=3:e$=i$+e$:ifc3%goto2195
+ 2175 f5=3:e$=i$+e$:ifc3%goto2195:rem"else
  2180 ifc%<>44thener%=1:return
  2185 sysm%:gosub2270:ifl2%=0thener%=2:return
  2190 f5=4:e$=i$+e$
  2195 i$=e$+chr$(f5):return
+
  2200 sysm%:gosub2270:ifl2%thener%=2:return
  2205 i$=i$+chr$(97)
- 2210 ifc3%=0thensysm%:goto2210
- 2215 return
- 2220 sysm%:e$="":ifc%=35goto2245
- 2225 i$="":gosub2635:iflen(j$)=1andl2%=0thenj$=chr$(160)+chr$(asc(j$)and31)
+ 2210 ifc3%thenreturn:rem"do
+ 2215 sysm%:goto2210:rem"while(true)
+
+ 2220 sysm%:e$="":ifc%<>35goto2225:rem"else
+ 2221 sysm%:gosub2270:ifl2%thener%=2:return
+ 2222 e$=i$+chr$(72):ifc%<>44thener%=1:return
+ 2223 sysm%
+ 2225 i$="":gosub2635:iflen(j$)=1andl2%=0thenj$=chr$(160)+chr$(asc(j$)and31):rem"do
  2230 i$=i$+e$+j$+chr$(70):ifc3%thenreturn
  2235 gosub2920:ifc%<>44thener%=1:return
- 2240 sysm%:goto2225
- 2245 sysm%:gosub2270:ifl2%thener%=2:return
- 2250 e$=i$+chr$(72):ifc%<>44thener%=1:return
- 2255 goto2240
+ 2240 sysm%:goto2225:rem"while(true)
+
  2260 sysm%:ifc%<>164thener%=1:return
  2265 j%=25:gosub1595:return
+
  2270 i$="":i=0:gosub2275:return
+
  2275 i%(i)=0:i2%(i)=fx:i=i+1:fx=-1
- 2280 f8=0:gosub2405:iff8thensysm%:fx=l2%:goto2355
+ 2280 f8=0:gosub2405:iff8thensysm%:fx=l2%:gosub2355:goto2280:rem"do,continue
  2285 i$=i$+j$:i1=0:iffx>=0theniffx<>l2%thengosub3340:return
- 2290 ifc%<170orc%>179goto2390
- 2295 ifc%<177goto2325
- 2300 i2=1:ifc%>177theni2=2:ifc%=179theni2=4
+ 2290 ifc%>=170andc%<=179goto2295:rem"else
+ 2291 ifi%(i-1)<=0thengoto2293:rem"do,break
+ 2292 gosub2370:goto2291:rem"while(true)
+ 2293 i=i-1:iffx>=0thenl2%=fx
+ 2294 fx=i2%(i):return
+ 2295 ifc%>=177goto2300:rem"ifbegin
+ 2296 i1=c%-163:ifl2%<>0andi1<>7and(i1<=11ori%(i-1)<>4)thengosub3340:return
+ 2297 sysm%:i0=5:ifi1>8theni0=6:ifi1>10theni0=8:ifi1>11theni0=2:ifi1=13theni0=1
+ 2298 goto2345:rem"else
+ 2300 i2=1:ifc%>177theni2=2:ifc%=179theni2=4:rem"do
  2305 ifi1andi2thengosub3315:return
- 2310 i1=i1ori2:sysm%:ifc%>176andc%<180goto2300
+ 2310 i1=i1ori2:sysm%:ifc%<=176orc%>=180goto2315:rem"break
+ 2311 goto2300:rem"while(true)
  2315 i0=4:ifi1=7thengosub3315:return
- 2320 goto2345
- 2325 i1=c%-163:ifl2%=0ori1=7ori1>11andi%(i-1)=4goto2335
- 2330 gosub3340:return
- 2335 i0=5:ifi1>8theni0=6:ifi1>10theni0=8:ifi1>11theni0=2:ifi1=13theni0=1
- 2340 sysm%
  2345 fx=l2%
- 2350 i3=i%(i-1):ifi3>=i0thengosub2370:goto2350
+ 2350 i3=i%(i-1):ifi3<i0goto2352:rem"do,break
+ 2351 gosub2370:goto2350:rem"while(true)
+ 2352 gosub2355:goto2280:rem"while(true)
+
  2355 i%(i)=i0:i1%(i)=i1:i2%(i)=0:ifi1=7theni2%(i)=l2%
  2360 ifi1=12ori1=13thenfx=-1
- 2365 i=i+1:goto2280
+ 2365 i=i+1:return
+
  2370 i=i-1:i$=i$+chr$(i1%(i)):ifi1%(i)<12ori1%(i)>13goto2385
  2375 iffx<0thenfx=l2%
  2380 iffxthengosub3340:return
  2385 fx=i2%(i):return
- 2390 ifi%(i-1)>0thengosub2370:goto2390
- 2395 i=i-1:iffx>=0thenl2%=fx
- 2400 fx=i2%(i):return
+
  2405 l2%=0:ifc%>47andc%<58orc%=46goto2825
  2410 ifc%>64andc%<91thenf4=0:f1%=c%:gosub2645:return
  2415 ifc%=170thensysm%:gosub2405:return
