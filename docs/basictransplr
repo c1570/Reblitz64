@@ -163,7 +163,7 @@ CTRLCODE_TO_TITLE = {
 }
 
 
-def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources: list = None, var_table: set = set(), reachable_implicitly = True, close_block_before: list = list()) -> str:
+def get_var_branch_info(data: bytearray, branch_targets: list, jump_sources: list, var_table: set, close_block_before: list, curly_stack: list) -> str:
     if len(data) <= 2:
         return ""
     in_data = False
@@ -180,21 +180,24 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
     var_name = bytearray()
     branch_target = bytearray()
     j_sources = ", ".join([f"GOTO from {j}" if j >= 0 else f"GOSUB from {abs(j)}" for j in jump_sources]) if jump_sources is not None else ""
-    if "GOTO" in j_sources and "GOSUB" in j_sources:
-        print(f"line {line_number} is target of both GOTO and GOSUB. Check/fix! {j_sources}")
     is_subroutine = min(jump_sources) < 0 if jump_sources is not None and len(jump_sources) > 0 else False
     txt = ""
     pre_txts = []
-    txts = []  # [f"line_{line_number}:"]
+    txts = []
     while line_number in close_block_before:
         pre_txts.append(" }")
         close_block_before.remove(line_number)
+        reason = curly_stack.pop()
+        #print(f"Closing IF/ELSE brace of line {reason[2]}")
+        assert reason[0] in ["IF", "ELSE"] and reason[1] == line_number, f"{line_number}: Closing {reason[0]} brace mismatch, would close {reason[0]} opened in line {reason[2]}"
     if j_sources != "" and min(jump_sources) < 0:
+        assert len(curly_stack) == 0 or curly_stack.pop()[0] == "SUB"
         pre_txts.insert(0, "}")
         target_s = labels["sub"].get(str(line_number), f"sub_{str(line_number)}")
         pre_txts.append(f"\nfunction {target_s}(){{")
-    if j_sources != "" and not reachable_implicitly and len(jump_sources) == 1 and "GOTO" in j_sources:
-        print(f"line {line_number} is target of exactly one GOTO only. Inline or transform to if/then/else?")
+        curly_stack.append(["SUB", line_number, line_number])
+    curly_stack_len = len(curly_stack)
+
     def get_var_id(var_name):
         return "var_" + var_name.replace(" ", "_").replace("$", "str").replace("%", "int").replace("(", "arr")
     def add_var_name_to_txt():
@@ -293,7 +296,10 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
             if in_if_condition:
                 txts.append(txt + ") {")
                 txt = ""
+                line_if_clauses += 1
                 in_if_condition = False
+                curly_stack.append(["IF", None, line_number])
+                #print(f"{line_number}: opening if, curly_stack_len: {curly_stack_len}, stack: {','.join([e[0] for e in curly_stack])}")
             if c != 167:
                 add_char_to_txt(c, True)
         elif c == 40:  # (
@@ -343,17 +349,20 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
                 txt = ""
                 continue
             elif c == 139:  # IF
-                line_if_clauses += 1
                 in_if_condition = True
             add_char_to_txt(c, True)
 
     # flush everything
     add_var_name_to_txt()
     add_branch_target_to_txt()
+
+    # handling annotations
     if 'REM "' in txt:
         flags = re.search('REM "(.*)', txt).group(1).split(",")
         if 'ELSEIF' in flags:
             assert "GOTO" in txts.pop()
+            reason = curly_stack.pop()
+            assert reason[0] == "IF", f"{line_number}: Misplaced ELSEIF would close non-IF block opened by {reason[0]} in line {reason[2]}"
             txts.append(" } else")
             txt = ""
             assert line_if_clauses == 1
@@ -363,28 +372,33 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
             txt = ""
             goto_line = txts.pop()
             assert "GOTO" in goto_line
-            goto_target = re.search('GOTO (\d*)', goto_line).group(1)
+            reason = curly_stack.pop()
+            assert reason[0] == "IF", f"{line_number}: Misplaced ELSE would close non-IF block opened by {reason[0]} in line {reason[2]}"
+            goto_target = int(re.search('GOTO (\d*)', goto_line).group(1))
             if len(txts) > 0 and txts[-1].startswith(" if"):
                 # special case: IF...GOTOXXXX:REM"ELSE - this is actually just a multiline THEN with inverted condition
                 if_line = txts.pop()
                 if_line = f" if(!{if_line[3:].replace(') {', ')) {')}"
                 txts.append(if_line)
+                curly_stack.append(["IF", goto_target, line_number])
             else:
                 txts.append(" } else {")
+                curly_stack.append(["ELSE", goto_target, line_number])
             line_if_clauses -= 1
             line_contains_unconditional_branch = False
-            close_block_before.append(int(goto_target))
+            close_block_before.append(goto_target)
         if 'IFBEGIN' in flags:
             goto_line = txts.pop()
             assert "GOTO" in goto_line
             if_line = txts.pop()
-            assert if_line.startswith(" if"), "IFBEGIN only supports the IF...GOTO pattern"
+            assert if_line.startswith(" if"), f"{line_number}: IFBEGIN only supports the IF...GOTO pattern"
             txt = ""
             if_line = f" if(!{if_line[3:].replace(') {', ')) {')}"
-            print(f"IFBEGIN: {if_line}")
+            #print(f"IFBEGIN: {if_line}")
             assert line_if_clauses == 1
             line_if_clauses = 0
             txts.append(if_line)
+            # curly_braces is already taken care of in IF token handling
         if 'BREAK' in flags:
             assert "GOTO" in txts.pop()
             txts.append(" break")
@@ -396,18 +410,28 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
         if 'DO' in flags:
             txts.insert(0, " do {")
             txt = ""
+            curly_stack.insert(curly_stack_len, ["DO", None, line_number])
+            j_sources = ""  # disable mixed GOTO/GOSUB warning
+            #print(f"{line_number}: do, curly_stack_len: {curly_stack_len}, stack: {','.join([e[0] for e in curly_stack])}")
         if 'WHILE(TRUE)' in flags:
             assert "GOTO" in txts.pop()
+            reason = curly_stack.pop()
+            assert reason[0] == "DO", f"{line_number}: Misplaced WHILE would close non-DO block opened by {reason[0]} in line {reason[2]}"
             txts.append(" } while(true)")
             txt = ""
     if txt != "":
         txts.append(txt)
+    #print(f"Line {line_number}, closing {line_if_clauses} if braces, stack: {','.join([e[0] for e in curly_stack])}")
     while line_if_clauses > 0:
+        reason = curly_stack.pop()
+        assert reason[0] in ["IF", "ELSE"], f"{line_number}: Implicit {reason[0]} closing brace would close block opened by {reason[0]} in line {reason[2]}"
         txts.append(" }")
         line_if_clauses -= 1
     #else:
     #    if line_contains_unconditional_branch:
     #        txts.append("")
+    if "GOTO" in j_sources and "GOSUB" in j_sources:
+        print(f"line {line_number} is target of both GOTO and GOSUB. Check/fix! {j_sources}")
     return pre_txts + txts
 
 
@@ -498,23 +522,33 @@ class Program:
 def analyze_program(program: Program) -> (dict, str, set):
     line_number_to_jump_source = dict()
     var_table = set()
+    curly_stack = list()
+    close_block_before = list()
     for line in program.lines:
         branch_targets = []
-        get_var_branch_info(line.get_bytes()[:-1],
-                            branch_targets=branch_targets,
-                            var_table=var_table)
+        get_var_branch_info(
+            line.get_bytes()[:-1],
+            branch_targets=branch_targets,
+            jump_sources=[],
+            var_table=var_table,
+            close_block_before=close_block_before,
+            curly_stack=curly_stack
+        )
         for target in branch_targets:
             sources = line_number_to_jump_source.setdefault(abs(target), [])
             sources.append(line.number if target >= 0 else -line.number)
-    reachable_implicitly = True
     lines_as_txt = ["function main() {"]
     close_block_before = list()
+    curly_stack = list()
     for line in program.lines:
-        line_txt = get_var_branch_info(line.get_bytes()[:-1],
-                                       jump_sources=line_number_to_jump_source.setdefault(line.number, []),
-                                       close_block_before=close_block_before,
-                                       reachable_implicitly=reachable_implicitly)
-        reachable_implicitly = len(line_txt) > 0 and not (line_txt[-1] == "")
+        line_txt = get_var_branch_info(
+            line.get_bytes()[:-1],
+            branch_targets=[],
+            jump_sources=line_number_to_jump_source.setdefault(line.number, []),
+            var_table=set(),
+            close_block_before=close_block_before,
+            curly_stack=curly_stack
+        )
         lines_as_txt.extend(line_txt)
     return line_number_to_jump_source, "\n".join(lines_as_txt), var_table
 
