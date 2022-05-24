@@ -13,11 +13,11 @@ output_file = "output.prg"
 output_txt_file = "output.txt"
 
 
-TOKENS = ["END", "FOR", "NEXT", "DATA", "INPUT", "INPUT#", "DIM", "READ",
+TOKENS = ["END", "for(1;1;1) { //", "} //NEXT", "DATA", "INPUT", "INPUT#", "DIM", "READ",
           "LET", "GOTO", "RUN", "if(", "RESTORE", "",  # GOSUB
-          "return", "REM", "STOP", "ON", "WAIT", "LOAD", "SAVE", "VERIFY", "DEF", "POKE",
-          "PRINT#", "PRINT", "CONT", "LIST", "CLR", "CMD", "SYS", "OPEN",
-          "CLOSE", "GET", "NEW", "TAB(", "TO", "FN", "SPC(", "THEN", "NOT",
+          "return", "//REM", "STOP", "ON", "WAIT", "LOAD", "SAVE", "VERIFY", "DEF", "POKE",
+          "//PRINT#", "//PRINT", "CONT", "LIST", "CLR", "CMD", "//SYS", "//OPEN",
+          "//CLOSE", "//GET", "NEW", "TAB(", "TO", "FN", "SPC(", "THEN", "NOT",
           "STEP", "+", "-", "*", "/", "^", "&&", "||", ">", "=", "<",
           "SGN", "Math.floor", "Math.abs", "USR", "FRE", "POS", "SQR", "RND", "LOG",
           "EXP", "COS", "SIN", "TAN", "ATN", "PEEK", "LEN", "STR$", "VAL",
