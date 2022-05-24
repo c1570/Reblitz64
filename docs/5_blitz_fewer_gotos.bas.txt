@@ -474,25 +474,25 @@
 
  2920 e%=e%+len(i$):print#4,i$;:return
 
- 2930 c%(b5%)=e%:i$=chr$(79):if(st)goto2945
- 2935 gosub2920:get#2,i$:ifi$=""theni$=chr$(0)
- 2940 if(st)=0goto2935
+ 2930 c%(b5%)=e%:i$=chr$(79):ifstgoto2945:rem"else
+ 2935 gosub2920:get#2,i$:ifi$=""theni$=chr$(0):rem"do
+ 2940 ifstgoto2945:rem"break
+ 2941 goto2935:rem"while(true)
  2945 gosub2920:ifk%thenclose5
  2950 close2:close3:close4:b%(b2%)=-32767
- 2955 ift%>1thenclose6:print#15,"s"+y$+":z/"+a1$:goto2970
+ 2955 ift%>1thenclose6:print#15,"s"+y$+":z/"+a1$:goto2970:rem"else
  2960 close6:open6,r1%,6,y$+":z/"+a1$+",p,w":gosub3305:print#6,chr$(1);
  2965 print#6,chr$(8);
- 2970 ift8%thengosub3400:return:rem todo was goto1061
- 2975 i$="":h1=1:ifh=0goto3050
- 2980 h1=8:z=h-1:ifz<16theni$=chr$(176+z):goto3000
- 2985 ifz<32theni$=chr$(224+z):goto3000
- 2990 h1=h1+1:ifz<256theni$=chr$(166)+chr$(z):goto3000
+ 2970 ift8%thengosub3400:return
+ 2975 i$="":h1=1:ifh=0goto3050:rem"else
+ 2980 h1=8:z=h-1:ifz<16theni$=chr$(176+z):goto3000:rem"else
+ 2985 ifz<32theni$=chr$(224+z):goto3000:rem"else
+ 2990 h1=h1+1:ifz<256theni$=chr$(166)+chr$(z):goto3000:rem"else
  2995 h1=h1+1:f7=int(z/256):f6=z-f7*256:i$=chr$(167)+chr$(f7)+chr$(f6)
  3000 i$=i$+chr$(16)+chr$(1)+chr$(218)+chr$(170)+chr$(0)+chr$(0)
-
  3001 forf=0toz
- 3005 ifh1%(f)<256goto3045
- 3010 j1%=h1%(f)and255:ifj1%=1thenh1=h1+7:goto3045
+ 3005 ifh1%(f)<256goto3045:rem"else
+ 3010 j1%=h1%(f)and255:ifj1%=1thenh1=h1+7:goto3045:rem"else
  3015 f1=h%(f):iff1<0thenf1=f1+65536
  3020 l2%=f1/256:l3%=f1-l2%*256:e$=""
  3025 ifl3%>127thene$="$":ifl2%>127thene$="%"
@@ -500,48 +500,46 @@
  3035 e$=chr$(l2%and127)+j$+e$:x3=x3+1:printleft$(x$,5+x2);:printspc(x4);
  3040 print"?bad subscript error frm ";:printe$:gosub3380
  3045 next
-
  3050 print#15,"s"+y$+":"+a2$:open3,r1%,3,y$+":"+a2$+",p,w":gosub3305
- 3055 ift%<3ort2%=0goto3065
- 3060 f=t1%+1:gosub3300:c%=f:goto3070
- 3065 open7,r%,7,"runtime,p,r":forf=2047tot1%:get#7,c$:ifc$=""thenc$=chr$(0)
- 3066 print#3,c$;:next:close7:c%=f
+ 3055 ift%>=3andt2%<>0goto3060:rem"ifbegin
+ 3057 open7,r%,7,"runtime,p,r":forf=2047tot1%:get#7,c$:ifc$=""thenc$=chr$(0)
+ 3059 print#3,c$;:next:close7:c%=f:goto3070:rem"else
+ 3060 f=t1%+1:gosub3300:c%=f
  3070 f=c%+13+h1+k%+e%:ift%=4thenf=c%+13+h1+t7%
  3075 gosub3300:f=f+g*7:gosub3300:gosub3300:f=c%+12:gosub3300:f=f+h1
- 3080 gosub3300:f=f+k%+1:gosub3300:c%=f:print#3,i$;:ifh1<9goto3120
-
- 3085 forf=0toh-1:ifh1%(f)<256goto3115
- 3090 j1%=h1%(f)and255:ifj1%>1goto3115
+ 3080 gosub3300:f=f+k%+1:gosub3300:c%=f:print#3,i$;:ifh1<9goto3120:rem"else
+ 3085 forf=0toh-1:ifh1%(f)<256goto3115:rem"else
+ 3090 j1%=h1%(f)and255:ifj1%>1goto3115:rem"else
  3095 f1=h%(f):iff1<0thenf1=f1+65536
  3100 l2%=f1/256:l3%=f1-l2%*256:f5=f*2+7:f6=int(f5/256)
  3105 f5=f5-f6*256:print#3,chr$(186);:print#3,chr$(16);:print#3,chr$(1);:print#3,chr$(l2%);
  3110 print#3,chr$(l3%);:print#3,chr$(f6);:print#3,chr$(f5);
  3115 next
-
- 3120 print#3,chr$(22);:ifk%=0goto3140
+ 3120 print#3,chr$(22);:ifk%=0goto3140:rem"else
  3125 open2,r1%,2,y$+":d/"+a1$:
  3126 forc=1tok%:get#2,b$
  3130 ifb$=""thenb$=chr$(0)
  3135 print#3,b$;
  3136 next:close2
  3140 print#3,chr$(255);:j%=0:j1%=0:open2,r1%,2,y$+":p/"+a1$+",s,r"
-
  3145 print"{home}{down}pass2  ":n1%=n%+111:n2%=n1%+15
  3146 forl=0toe%-1:l%=l
- 3150 sysn1%:ifl%<c%(j%)orj%=b5%goto3180
- 3155 ifj%<b5%thenprint"{home}{down}{down}";:printd%(j%)+32767:j%=j%+1:ifl%>=c%(j%)goto3155
- 3160 ift%>1goto3180
+ 3150 sysn1%:ifl%<c%(j%)orj%=b5%goto3180:rem"else
+ 3155 ifj%<b5%thenprint"{home}{down}{down}";:printd%(j%)+32767:j%=j%+1:rem"do
+ 3156 ifl%<c%(j%)goto3160:rem"break
+ 3157 goto3155:rem"while(true)
+ 3160 ift%>1goto3180:rem"else
  3165 l3%=(l%+c%)/256:l2%=l%+c%-l3%*256:print#6,chr$(4);:print#6,chr$(8);
  3170 print#6,chr$(l2%);:print#6,chr$(l3%);:print#6,"=";:print#6,d%(j%-1)+32767;
  3175 print#6,chr$(0);
- 3180 ifl%<>b%(j1%)goto3200
+ 3180 ifl%<>b%(j1%)goto3200:rem"else
  3185 j1%=j1%+1
- 3186 ifc1%=255thenc1%=c%(j%)-l%+1:goto3200
+ 3186 ifc1%=255thenc1%=c%(j%)-l%+1:goto3200:rem"else
  3190 l2%=c1%:sysn1%:l2%=l2%*256+c1%-32767:gosub3290
  3195 c1%=l2%/256:sysn2%:l%=l%+1:l=l%:c1%=l2%-c1%*256
  3200 sysn2%
  3201 next
- 3202 close2:ift%=4andt2%>0goto3235
+ 3202 close2:ift%=4andt2%>0goto3235:rem"else
  3205 ift%=4thenf=k%+e%:iff<t7%thenforf=ftot7%-1:print#3,chr$(79);:next
  3210 ift%=1thenprint#6,chr$(0);:print#6,chr$(0);:close6
  3215 i$=chr$(0)+chr$(0)+chr$(0)+chr$(0)+chr$(0)
@@ -557,11 +555,13 @@
  3290 c5%=7218:c6%=l2%:c7%=b5%:sysn%:rem 7218 is offset of d%()
  3291 ifc5%<0thenc5%=0:gosub3320
  3295 l2%=c%(c5%)+c%:return
+
  3300 f1=int(f/256):l2%=f-f1*256:print#3,chr$(l2%);:print#3,chr$(f1);
  3301 return
 
  3305 input#r3%,a,a5$:ifa=0thenreturn
- 3310 x2=15:goto1042
+ 3310 x2=15:printleft$(x$,6+x2);:printspc(x4);:print"{rvon}";:printa;:printa5$:close2:close3:close4:close15
+ 3311 end
 
  3315 x1$="syntax error":gosub3345:return
  3320 x1$="undef'd statement error":b1=d%(j%-1)+32767
@@ -571,7 +571,8 @@
  3340 x1$="type mismatch error":gosub3345:return
  3345 ifx5thenreturn
  3350 x1=x1+1:x5=1:gosub3370
- 3355 sysm%:ifc3%=0goto3355
+ 3355 sysm%:ifc3%goto3360:rem"do,break
+ 3356 goto3355:rem"while(true)
  3360 return
 
  3370 printleft$(x$,5+x2);:printspc(x4);:print"?";:printx1$;:print" in";:printb1
