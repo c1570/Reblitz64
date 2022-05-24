@@ -360,22 +360,27 @@ def get_var_branch_info(data: bytearray, branch_targets: list = [], jump_sources
             line_if_clauses = 0
             line_contains_unconditional_branch = False
         if 'ELSE' in flags:
+            txt = ""
             goto_line = txts.pop()
             assert "GOTO" in goto_line
-            print(f"REMELSE: {txt}, {goto_line}")
             goto_target = re.search('GOTO (\d*)', goto_line).group(1)
-            txts.append(" } else {")
-            txt = ""  # ignore the REM
+            if len(txts) > 0 and txts[-1].startswith(" if"):
+                # special case: IF...GOTOXXXX:REM"ELSE - this is actually just a multiline THEN with inverted condition
+                if_line = txts.pop()
+                if_line = f" if(!{if_line[3:].replace(') {', ')) {')}"
+                txts.append(if_line)
+            else:
+                txts.append(" } else {")
             line_if_clauses -= 1
             line_contains_unconditional_branch = False
             close_block_before.append(int(goto_target))
         if 'IFBEGIN' in flags:
-            goto_line = txts.pop()  # remove the GOTO
+            goto_line = txts.pop()
             assert "GOTO" in goto_line
             if_line = txts.pop()
             assert if_line.startswith(" if"), "IFBEGIN only supports the IF...GOTO pattern"
             txt = ""
-            if_line = f"if(!{if_line[3:].replace(') {', ')) {')}"
+            if_line = f" if(!{if_line[3:].replace(') {', ')) {')}"
             print(f"IFBEGIN: {if_line}")
             assert line_if_clauses == 1
             line_if_clauses = 0
