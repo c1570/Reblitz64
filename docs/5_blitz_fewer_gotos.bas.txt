@@ -414,8 +414,11 @@
  2460 j$=i$:i$="":sysm%:return
 
  2465 j1%=0:j$="":l2%=255
- 2470 sysm%+3:ifc%=34thensysm%:goto2480:rem"do,break
- 2475 ifc%thenj$=j$+chr$(c%):j1%=j1%+1:goto2470:rem"while(true)
+ 2470 sysm%+3:rem"do
+ 2475 ifc%=34thensysm%:goto2480:rem"break
+ 2476 ifc%=0goto2480:rem"break
+ 2477 j$=j$+chr$(c%):j1%=j1%+1
+ 2478 goto2470:rem"while(true)
  2480 ifj1%<8thenj$=chr$(232+j1%)+j$:return
  2485 j$=chr$(231)+chr$(j1%)+j$:return
 
