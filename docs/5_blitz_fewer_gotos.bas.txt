@@ -19,7 +19,7 @@
  1058 gosub2930
  1060 ift%=1thenreturn
  1065 gosub3605:ift3%=0andt8%=0thenreturn
- 1066 ift3%=0thent8%=0:gosub3600:goto1068:rem"else
+ 1066 ift3%=0thent8%=0:t2%=0:t3%=0:gosub3605:goto1068:rem"else
  1067 t2%=t2%+1
  1068 printchr$(7);:k%=0:b5%=0:b2%=0:b3%=0:y%=0:ift%<4thenh=0:g=0
  1069 a2$=a$:goto1056:rem"while(true)
@@ -574,11 +574,11 @@
  3340 x1$="type mismatch error":gosub3345:return
  3345 ifx5thenreturn
  3350 x1=x1+1:x5=1:gosub3370
- 3355 sysm%:ifc3%goto3360:rem"do,break
+ 3355 sysm%:ifc3%thenreturn:rem"do
  3356 goto3355:rem"while(true)
- 3360 return
 
- 3370 printleft$(x$,5+x2);:printspc(x4);:print"?";:printx1$;:print" in";:printb1
+ 3370 printleft$(x$,5+x2);:printspc(x4);:print"?";:printx1$;:print" in";:printb1:gosub3380:return
+
  3380 x2=x2+1:ifx2=18thenx4=x4+40:x2=0:ifx4>40thenx4=0
  3385 return
 
@@ -589,9 +589,11 @@
  3410 return
  3415 print"{home}{down}{down}{down}{down}1 = single floppy":print"{down}{down}2 = dual drive floppy"
  3420 print"{down}{down}3 = 2 floppies with different addr's  "
- 3425 gett%:ift%=1theny$="0":goto3505
- 3430 ift%=2thena$="drive 0":b$="drive 1":goto3445
- 3435 ift%<>3goto3425
+ 3425 gett%:rem"do
+ 3426 ift%>=1andt%<=3goto3430:rem"break
+ 3427 goto3425:rem"while(true)
+ 3430 ift%=1theny$="0":goto3505:rem"else
+ 3435 ift%=2thena$="drive 0":b$="drive 1":goto3445:rem"else
  3440 gosub3720:y$="0":a$="device"+str$(r%):b$="device"+str$(r1%)
  3445 gosub3390:print"{home}{down}{down}";:printspc(13);:print"select mode :"
  3450 print"{down}{down}1. =  one file to drive 1      "
@@ -604,32 +606,39 @@
  3485 print"{down}{down}4. =  all files from     ";:printa$;:print" to "
  3490 print"      blank diskette in ";:printb$;:print" wth"
  3495 print"      overlay":printx$;:print"please select!"
- 3500 gett%:ift%<1ort%>4goto3500
+ 3500 gett%:rem"do
+ 3501 ift%>=1andt%<=4goto3505:rem"break
+ 3502 goto3500:rem"while(true)
  3505 t$="(prog. mode :"+str$(t%)+")":ift%=4thent8%=1
  3510 gosub3390:ift%=1thenreturn
  3520 print"{down}{down}In ";:printa$;
  3525 print" insert diskette with source for compilation     "
  3530 print"{down}press    {rvon}y{rvof}  when ready "
- 3535 geta$:ifa$<>"y"goto3535
+ 3535 geta$:rem"do
+ 3536 ifa$="y"goto3540:rem"break
+ 3537 goto3535:rem"while(true)
  3540 print#14,"i0":r3%=14:gosub3305:r3%=15:print"{down}{down}In ";:printb$;
  3545 print" insert blank diskette ! "
  3550 print"{down}want to new diskette            {rvon}y{rvof}es/{rvon}n{rvof}o "
- 3555 geta$:ifa$="n"goto3595
- 3560 ifa$<>"y"goto3555
+ 3555 geta$:rem"do
+ 3556 ifa$="y"ora$="n"goto3560:rem"break
+ 3557 goto3555:rem"while(true)
+ 3560 ifa$<>"y"goto3595:rem"else
  3565 print"{down}formatting diskette !    ":open9,r%,0,"$0":r3%=14
  3570 gosub3305:r3%=15
  3571 fora=1to30:get#9,a$:ifa$<>chr$(34)thennext
  3575 b$="":fora=1to16:get#9,a$:ifa$<>chr$(34)thenb$=b$+a$:next
- 3580 ifright$(b$,1)=" "thenb$=left$(b$,len(b$)-1):goto3580
+ 3580 ifright$(b$,1)<>" "goto3585:rem"do,break
+ 3581 b$=left$(b$,len(b$)-1):goto3580:rem"while(true)
  3585 get#9,a$:get#9,a$:get#9,a$:get#9,b1$:b1$=a$+b1$:close9:print#15,"n";
  3590 print#15,y$;:print#15,":";:print#15,b$;:print#15,",";:print#15,b1$:gosub3305
- 3595 print#15,"i";:print#15,y$:gosub3305
- 3600 t2%=0:t3%=0
- 3605 open9,r%,0,"$0":ift3%goto3625
+ 3595 print#15,"i";:print#15,y$:gosub3305:t2%=0:t3%=0:gosub3605:return
+
+ 3605 open9,r%,0,"$0":ift3%goto3625:rem"ifbegin
  3610 fort3%=1to6:get#9,a$:next
  3611 fort3%=t3%to33:get#9,a$
  3615 ifa$<>""thennext
- 3620 goto3630
+ 3620 goto3630:rem"else
  3625 fort4%=1tot3%:get#9,a$:next
  3630 a$="":b1$="":t5%=0
  3631 fort4%=1to4:get#9,b$:t3%=t3%+1
@@ -654,6 +663,8 @@
  3730 gosub3745
  3735 printleft$(x$,17);:printspc(27);:inputr1%:ifr1%<4orr1%>15goto3735
  3740 ifr%=r1%goto3725
+ 3741 gosub3745:return
+
  3745 printleft$(x$,15);:print"device-nbr. source prog. :  ";:printr%
  3750 printleft$(x$,17);:print"device-nbr. compiled prog. :";:printr1%
  3751 return
