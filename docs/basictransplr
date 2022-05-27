@@ -13,14 +13,14 @@ output_file = "output.prg"
 output_txt_file = "output.txt"
 
 
-TOKENS = ["END", "for(1;1;1) { //", "} //NEXT", "DATA", "INPUT", "INPUT#", "DIM", "READ",
+TOKENS = ["END", "for(0;0;0) { //", "} //NEXT", "DATA", "//INPUT", "//INPUT#", "//DIM", "READ",
           "LET", "GOTO", "RUN", "if(", "RESTORE", "",  # GOSUB
           "return", "//REM", "STOP", "ON", "WAIT", "LOAD", "SAVE", "VERIFY", "DEF", "POKE",
-          "//PRINT#", "//PRINT", "CONT", "LIST", "CLR", "CMD", "//SYS", "//OPEN",
+          "//PRINT#", "//console.log", "CONT", "LIST", "//CLR", "CMD", "//SYS", "//OPEN",
           "//CLOSE", "//GET", "NEW", "TAB(", "TO", "FN", "SPC(", "THEN", "NOT",
           "STEP", "+", "-", "*", "/", "^", "&&", "||", ">", "=", "<",
           "SGN", "Math.floor", "Math.abs", "USR", "FRE", "POS", "SQR", "RND", "LOG",
-          "EXP", "COS", "SIN", "TAN", "ATN", "PEEK", "LEN", "STR$", "VAL",
+          "EXP", "COS", "SIN", "TAN", "ATN", "PEEK", "LEN", "STR$", "parseFloat",
           "ASC", "String.fromCharCode", "LEFT$", "RIGHT$", "MID$", "GO"]
 TOK_TO_STR = {}
 val = 128
@@ -162,6 +162,8 @@ CTRLCODE_TO_TITLE = {
     159: "cyan"
 }
 
+all_variables = dict()
+
 
 def get_var_branch_info(data: bytearray, branch_targets: list, jump_sources: list, var_table: set, close_block_before: list, curly_stack: list) -> str:
     if len(data) <= 2:
@@ -206,8 +208,10 @@ def get_var_branch_info(data: bytearray, branch_targets: list, jump_sources: lis
             var_label = var_name.decode('ascii')
             #print(f"Variable: {var_label}")
             var_name.clear()
-            global labels
+            global labels, all_variables
             var_id = get_var_id(var_label)
+            if var_id not in all_variables:
+                all_variables[var_id] = ""
             var_title = labels["var"].get(var_label, "")
             var_table.add(var_label)
             if var_id.endswith("arr"):
@@ -421,6 +425,15 @@ def get_var_branch_info(data: bytearray, branch_targets: list, jump_sources: lis
             txt = ""
     if txt != "":
         txts.append(txt)
+
+    # note any array DIM
+    for txt in txts:
+        if "//DIM" in txt and "arr[" in txt:
+            global all_variables
+            m = re.match(r".*DIM\s*(.*)\[(.*)\]", txt)
+            if m:
+                all_variables[m.group(1)] = int(m.group(2)) + 1
+
     #print(f"Line {line_number}, closing {line_if_clauses} if braces, stack: {','.join([e[0] for e in curly_stack])}")
     while line_if_clauses > 0:
         reason = curly_stack.pop()
@@ -550,7 +563,23 @@ def analyze_program(program: Program) -> (dict, str, set):
             curly_stack=curly_stack
         )
         lines_as_txt.extend(line_txt)
-    return line_number_to_jump_source, "\n".join(lines_as_txt), var_table
+
+    # build variable prefix
+    prg_lines = []
+    for var_label in sorted(all_variables.keys()):
+        if all_variables[var_label] != "":
+            if "intarr" in var_label:
+                prg_lines.append(f"let {var_label} = new Uint8Array({all_variables[var_label]})")
+            elif "strarr" in var_label:
+                prg_lines.append(f"let {var_label} = Array.apply('', Array({all_variables[var_label]})).map(()=>'')")
+        else:
+            var_init = "0"
+            if "str" in var_label:
+                var_init = '""'
+            prg_lines.append(f"let {var_label} = {var_init}")
+
+    prg_lines.extend(lines_as_txt)
+    return line_number_to_jump_source, "\n".join(prg_lines), var_table
 
 
 with open(input_file, "rb") as infile:
