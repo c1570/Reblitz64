@@ -373,8 +373,8 @@
  2415 iff6<0orf6>255goto2417:rem"else
  2416 j$=chr$(166)+chr$(f6):return
  2417 f7=int(f6/256):j1%=f6-f7*256:j$=chr$(167)+chr$(f7)+chr$(j1%):return
- 2418 z=f6:j$=chr$(168):f7=peek(45)+peek(46)*256+2
- 2419 forf7=f7tof7+4:j$=j$+chr$(peek(f7)):next:j1%=f7:f7=f7-5:return
+ 2418 j$=chr$(168):f7=peek(45)+peek(46)*256+2
+ 2419 forz=f7tof7+4:j$=j$+chr$(peek(z)):next:j1%=z:z=f6:return
  2420 ifc%>64andc%<91thenf4=0:f1%=c%:gosub2645:return
  2421 ifc%=170thensysm%:gosub2405:return
  2422 ifc%<=179orc%>=203goto2442:rem"else
@@ -519,11 +519,11 @@
  3110 print#3,chr$(l3%);:print#3,chr$(f6);:print#3,chr$(f5);
  3115 next
  3120 print#3,chr$(22);:ifk%=0goto3140:rem"else
- 3125 open2,r1%,2,y$+":d/"+a1$:
- 3126 forc=1tok%:get#2,b$
+ 3125 open8,r1%,2,y$+":d/"+a1$:
+ 3126 forc=1tok%:get#8,b$
  3130 ifb$=""thenb$=chr$(0)
- 3135 print#3,b$;
- 3136 next:close2
+ 3135 print#8,b$;
+ 3136 next:close8
  3140 print#3,chr$(255);:j%=0:j1%=0:open2,r1%,2,y$+":p/"+a1$+",s,r"
  3145 print"{home}{down}pass2  ":n1%=n%+111:n2%=n1%+15
  3146 forl=0toe%-1:l%=l
@@ -626,8 +626,12 @@
  3560 ifa$<>"y"goto3595:rem"else
  3565 print"{down}formatting diskette !    ":open9,r%,0,"$0":r3%=14
  3570 gosub3305:r3%=15
- 3571 fora=1to30:get#9,a$:ifa$<>chr$(34)thennext
- 3575 b$="":fora=1to16:get#9,a$:ifa$<>chr$(34)thenb$=b$+a$:next
+ 3571 a=1
+ 3572 get#9,a$:a=a+1:ifa$=chr$(34)ora>30goto3575:rem"do,break
+ 3573 goto3572:rem"while(true)
+ 3575 b$="":a=1
+ 3576 get#9,a$:a=a+1:ifa$=chr$(34)ora>16goto3580:rem"do,break
+ 3577 b$=b$+a$:goto3576:rem"while(true)
  3580 ifright$(b$,1)<>" "goto3585:rem"do,break
  3581 b$=left$(b$,len(b$)-1):goto3580:rem"while(true)
  3585 get#9,a$:get#9,a$:get#9,a$:get#9,b1$:b1$=a$+b1$:close9:print#15,"n";
@@ -636,15 +640,16 @@
 
  3605 open9,r%,0,"$0":ift3%goto3625:rem"ifbegin
  3610 fort3%=1to6:get#9,a$:next
- 3611 fort3%=t3%to33:get#9,a$
- 3615 ifa$<>""thennext
+ 3611 get#9,a$:rem"do
+ 3615 t3%=t3%+1:ifa$=""ort3%>33goto3620:rem"break
+ 3616 goto3611:rem"while(true)
  3620 goto3630:rem"else
  3625 fort4%=1tot3%:get#9,a$:next
  3630 a$="":b1$="":t5%=0
  3631 fort4%=1to4:get#9,b$:t3%=t3%+1
- 3635 if(st)goto3700
+ 3635 if(st)thent3%=0:close9:return
  3640 next
- 3645 get#9,b$:t3%=t3%+1:if(st)goto3700
+ 3645 get#9,b$:t3%=t3%+1:if(st)thent3%=0:close9:return
  3650 ifb$=""goto3690
  3655 t4%=asc(b$):ont5%goto3670,3680
  3660 ift4%=34thent5%=1
