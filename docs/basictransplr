@@ -13,7 +13,7 @@ output_file = "output.prg"
 output_txt_file = "output.txt"
 
 
-TOKENS = ["END", "for(0;0;0) { //", "} //NEXT", "DATA", "//INPUT", "//INPUT#", "//DIM", "READ",
+TOKENS = ["END", "//FOR", "}", "DATA", "//INPUT", "//INPUT#", "//DIM", "READ",
           "LET", "GOTO", "RUN", "if(", "RESTORE", "",  # GOSUB
           "return", "//REM", "STOP", "ON", "WAIT", "LOAD", "SAVE", "VERIFY", "DEF", "POKE",
           "//PRINT#", "//console.log", "CONT", "LIST", "//CLR", "CMD", "//SYS", "//OPEN",
@@ -354,6 +354,11 @@ def get_var_branch_info(data: bytearray, branch_targets: list, jump_sources: lis
                 continue
             elif c == 139:  # IF
                 in_if_condition = True
+            if c == 129:  # FOR
+                curly_stack.append(["FOR", None, line_number])
+            if c == 130:  # NEXT
+                reason = curly_stack.pop()
+                assert reason[0] == "FOR", f"{line_number}: NEXT brace mismatch, would close {reason[0]} opened in line {reason[2]}"
             add_char_to_txt(c, True)
 
     # flush everything
@@ -426,13 +431,18 @@ def get_var_branch_info(data: bytearray, branch_targets: list, jump_sources: lis
     if txt != "":
         txts.append(txt)
 
-    # note any array DIM
-    for txt in txts:
+    # handle DIMs and FORs
+    for idx, txt in enumerate(txts):
         if "//DIM" in txt and "arr[" in txt:
             global all_variables
             m = re.match(r".*DIM\s*(.*)\[(.*)\]", txt)
             if m:
                 all_variables[m.group(1)] = int(m.group(2)) + 1
+        if "//FOR" in txt:
+            assert "STEP" not in txt, f"{line_number}: FOR...STEP is not supported"
+            m = re.match(r".*FOR\s*(.*)\=\s*(.*)\s*TO\s*(.*)\s*", txt)
+            assert m.group(3).strip() != m.group(1).strip(), f"{line_number}: FOR stop must be constant"
+            txts[idx] = f" for({m.group(1)}={m.group(2)}; {m.group(1)}<{m.group(3)}; {m.group(1)}++) {{"
 
     #print(f"Line {line_number}, closing {line_if_clauses} if braces, stack: {','.join([e[0] for e in curly_stack])}")
     while line_if_clauses > 0:
