@@ -18,7 +18,7 @@ TOKENS = ["END", "//FOR", "}", "DATA", "//INPUT", "//INPUT#", "//DIM", "READ",
           "return", "//REM", "STOP", "ON", "WAIT", "LOAD", "SAVE", "VERIFY", "DEF", "POKE",
           "//PRINT#", "//console.log", "CONT", "LIST", "//CLR", "CMD", "//SYS", "//OPEN",
           "//CLOSE", "//GET", "NEW", "TAB(", "TO", "FN", "SPC(", "THEN", "NOT",
-          "STEP", "+", "-", "*", "/", "^", "&&", "||", ">", "=", "<",
+          "STEP", "+", "-", "*", "/", "^", "&", "|", ">", "=", "<",
           "SGN", "Math.floor", "Math.abs", "USR", "FRE", "POS", "SQR", "RND", "LOG",
           "EXP", "COS", "SIN", "TAN", "ATN", "PEEK", "LEN", "STR$", "parseFloat",
           "ASC", "String.fromCharCode", "LEFT$", "RIGHT$", "MID$", "GO"]
@@ -347,6 +347,12 @@ def get_var_branch_info(data: bytearray, branch_targets: list, jump_sources: lis
                     if txt.endswith("<"):
                         txt = txt[:-1] + "!="
                         continue
+                if c == 176:  # OR token
+                    txt = txt + "||"
+                    continue
+                if c == 175:  # AND token
+                    txt = txt + "&&"
+                    continue
             if c == 58:  # :
                 starting_token = -1
                 txts.append(txt)
