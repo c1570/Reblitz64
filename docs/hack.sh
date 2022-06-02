@@ -2,7 +2,13 @@
 
 petcat -w2 -o input.prg 5_blitz_fewer_gotos.bas.txt
 ./basictransplr
-node_modules/.bin/js-beautify output.txt > output.js
+echo "let pass1_result = ''" > output.js
+echo "let pass2_result = ''" >> output.js
+node_modules/.bin/js-beautify output.txt >> output.js
+#echo 'let input_prg = new Uint8Array([0x01, 0x08, 0x16,0x08,0x64,0x00,0x41,0xb2,0x41,0xaa,0x31,0x3a,0x8b,0x41,0xb3,0x31,0x30,0x30,0x89,0x31,0x30,0x30,0x00,0x00,0x00])' >> output.js
+echo 'let input_prg = new Uint8Array([' >> output.js
+cat test-input.prg | ./hex >> output.js
+echo '])' >> output.js
 cat helpers.js >> output.js
 perl -i -pe 's/  user_prompt_mode\(\)/var_Tint=1; var_Ystr=""; var_Tstr="(prog. mode : 1)"/gm' output.js
 perl -i -pe 's/  GOTO/\/\/GOTO/gm' output.js
@@ -24,5 +30,22 @@ perl -i -pe 's/var_L2int = ASC\(MID\$\(var_I1strarr\[var_I4\], 2\)\)/var_L2int =
 perl -i -pe 's/var_F = ASC\(var_Fstr\) \* 256 \+ ASC\(MID\$\(var_Fstr, 2\)\)/var_F = var_Fstr.charCodeAt(0) * 256 + var_Fstr.charCodeAt(2-1)/gm' output.js
 perl -i -pe 's/MID\$\((.*?),(.*?)\)/\1.substr(\2-1)/gm' output.js
 perl -i -pe 's/ASC\((.*?)\)/\1.charCodeAt(0)/gm' output.js
-perl -i -pe 's/  pass2\(\)/console.log("skip pass2")/gm' output.js
+perl -i -pe 's/if\ \(\!\(var_ST\)\)/if(false)/gm' output.js
+
+# file handle 2 is basic input prg (in pass1) or pass1 result (in pass2)
+# file handle 3 is result compiled prg (in pass2)
+# file handle 4 is pass1 result (in pass1)
+# file handle 6 is offset-linenr helper file "z/..."
+# file handle 7 is runtime
+# file handle 8 is (something with compiling multiple files)
+
+#FIXME var_H1intarr[var_G1] && 255 - '&&' must be '&'
+
+perl -i -pe 's/\/\/PRINT\# 4, var_Istr ;/pass1_result = pass1_result + var_Istr/gm' output.js
+
+perl -i -pe 's/\/\/SYS  var_N1int/sys_p2_char_read()/gm' output.js
+perl -i -pe 's/\/\/SYS  var_N2int/sys_p2_char_write()/gm' output.js
+
+perl -i -pe 's/END/print_pass2_result()/gm' output.js
+
 node output.js

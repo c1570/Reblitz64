@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+import sys
+data=sys.stdin.buffer.read()
+print(",".join([f"0x{ch:02x}" for ch in data]))

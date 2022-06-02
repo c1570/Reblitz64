@@ -1,5 +1,4 @@
-let input_prg = new Uint8Array([0x16,0x08,0x64,0x00,0x41,0xb2,0x41,0xaa,0x31,0x3a,0x8b,0x41,0xb3,0x31,0x30,0x30,0x89,0x31,0x30,0x30,0x00,0x00,0x00])
-let cur_input_idx = 0
+let cur_input_idx = 2
 
 function sys_read_line() {
   if(cur_input_idx >= input_prg.length || input_prg[cur_input_idx + 1] == 0) { var_C4int = 0; return }
@@ -26,7 +25,7 @@ function int_sys_chrget(ignore_spaces) {
       var_Cint = 0
       var_C2int = 1
       var_C3int = 0x1f
-      cur_input_idx += var_C1int
+      cur_input_idx += var_C1int + 1
       return
     }
   } while(ignore_spaces && chr == 0x20)
@@ -55,6 +54,26 @@ function sys_find_in_array() {
     }
     i++
   }
+}
+
+let p2_cur_p1_result_idx = 0
+
+function sys_p2_char_read() {
+  var_C1int = pass1_result.charCodeAt(p2_cur_p1_result_idx)
+  p2_cur_p1_result_idx++
+}
+
+function sys_p2_char_write() {
+  pass2_result = pass2_result + String.fromCharCode(var_C1int)
+}
+
+function print_pass2_result() {
+  let res = ''
+  for(i=0; i<pass2_result.length; i++) {
+    res = res + ("0" + pass2_result.charCodeAt(i).toString(16)).slice(-2) + " "
+  }
+  console.log(res)
+  console.log(`P-code length is ${pass2_result.length} bytes`)
 }
 
 if(typeof document !== 'undefined') {
