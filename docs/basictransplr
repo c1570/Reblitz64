@@ -584,10 +584,14 @@ def analyze_program(program: Program) -> (dict, str, set):
     prg_lines = []
     for var_label in sorted(all_variables.keys()):
         if all_variables[var_label] != "":
-            if "intarr" in var_label:
-                prg_lines.append(f"let {var_label} = new Uint8Array({all_variables[var_label]})")
-            elif "strarr" in var_label:
+            if var_label.endswith("intarr"):
+                prg_lines.append(f"let {var_label} = new Int16Array({all_variables[var_label]})")
+            elif var_label.endswith("strarr"):
                 prg_lines.append(f"let {var_label} = Array.apply('', Array({all_variables[var_label]})).map(()=>'')")
+            elif var_label.endswith("arr"):
+                prg_lines.append(f"let {var_label} = new Float32Array({all_variables[var_label]})")
+            else:
+                raise Exception(f"Bug: Array size given for plain variable {var_label}")
         else:
             var_init = "0"
             if "str" in var_label:
