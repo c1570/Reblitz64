@@ -70,6 +70,10 @@ function float2string(f) {
   return String.fromCharCode(c64_b1) + String.fromCharCode(c64_b2) + String.fromCharCode(c64_b3) + String.fromCharCode(c64_b4) + String.fromCharCode(c64_b5)
 }
 
+for(let ch of runtime) {
+  pass2_result = pass2_result + String.fromCharCode(ch)
+}
+
 let p2_cur_p1_result_idx = 0
 
 function sys_p2_char_read() {
@@ -84,10 +88,11 @@ function sys_p2_char_write() {
 function print_pass2_result() {
   let res = ''
   for(i=0; i<pass2_result.length; i++) {
+    if(i%16==0) res = res + "\n"
     res = res + ("0" + pass2_result.charCodeAt(i).toString(16)).slice(-2) + " "
   }
   console.log(res)
-  console.log(`P-code length is ${pass2_result.length} bytes`)
+  console.log(`Result length is ${pass2_result.length} bytes`)
 }
 
 function c64_parse_float(s) {

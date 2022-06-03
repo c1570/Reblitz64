@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
 import sys
 data=sys.stdin.buffer.read()
-print(",".join([f"0x{ch:02x}" for ch in data]))
+i=0
+for ch in data:
+  if i>0:
+    print(",", end='' if i % 16 != 0 else '\n')
+  print(f"0x{ch:02x}", end='')
+  i+=1
