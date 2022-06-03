@@ -31,6 +31,11 @@ perl -i -pe 's/var_F = ASC\(var_Fstr\) \* 256 \+ ASC\(MID\$\(var_Fstr, 2\)\)/var
 perl -i -pe 's/MID\$\((.*?),(.*?)\)/\1.substr(\2-1)/gm' output.js
 perl -i -pe 's/ASC\((.*?)\)/\1.charCodeAt(0)/gm' output.js
 perl -i -pe 's/if\ \(\!\(var_ST\)\)/if(false)/gm' output.js
+perl -i -pe 's/var_Z \= var_F6/var_Jstr = String.fromCharCode(168) + float2string(var_F6); return/gm' output.js
+
+# FIXME handle boolean AND/OR properly
+perl -i -pe 's/&& ([0-9]+)/& \1/gm' output.js
+perl -i -pe 's/if \(var_I1 \&\& var_I2\)/if (var_I1 & var_I2)/gm' output.js
 
 # file handle 2 is basic input prg (in pass1) or pass1 result (in pass2)
 # file handle 3 is result compiled prg (in pass2)
@@ -38,8 +43,6 @@ perl -i -pe 's/if\ \(\!\(var_ST\)\)/if(false)/gm' output.js
 # file handle 6 is offset-linenr helper file "z/..."
 # file handle 7 is runtime
 # file handle 8 is (something with compiling multiple files)
-
-#FIXME var_H1intarr[var_G1] && 255 - '&&' must be '&'
 
 perl -i -pe 's/\/\/PRINT\# 4, var_Istr ;/pass1_result = pass1_result + var_Istr/gm' output.js
 

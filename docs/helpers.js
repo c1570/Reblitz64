@@ -56,6 +56,20 @@ function sys_find_in_array() {
   }
 }
 
+function float2string(f) {
+  let f_buf = new Float64Array([f])
+  let b_buf = new Uint32Array(f_buf.buffer)
+  let sign_1b = b_buf[1] >> 31
+  let exponent_11b = ((b_buf[1] >> 20) & 0x7ff) - 1023
+  let fraction_31b = ((b_buf[1] & 0xfffff) << 11) + (b_buf[0] >> 20) // implicit leading 1
+  let c64_b1 = exponent_11b + 128
+  let c64_b2 = (sign_1b << 7) + (fraction_31b >> 24)
+  let c64_b3 = (fraction_31b >> 16) & 0xff
+  let c64_b4 = (fraction_31b >> 8) & 0xff
+  let c64_b5 = fraction_31b & 0xff
+  return String.fromCharCode(c64_b1) + String.fromCharCode(c64_b2) + String.fromCharCode(c64_b3) + String.fromCharCode(c64_b4) + String.fromCharCode(c64_b5)
+}
+
 let p2_cur_p1_result_idx = 0
 
 function sys_p2_char_read() {
@@ -74,6 +88,11 @@ function print_pass2_result() {
   }
   console.log(res)
   console.log(`P-code length is ${pass2_result.length} bytes`)
+}
+
+function c64_parse_float(s) {
+  if(s == ".") return 0
+  return parseFloat(s)
 }
 
 if(typeof document !== 'undefined') {
