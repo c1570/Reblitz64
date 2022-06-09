@@ -522,7 +522,7 @@
  3125 open8,r1%,2,y$+":d/"+a1$:
  3126 forc=1tok%:get#8,b$
  3130 ifb$=""thenb$=chr$(0)
- 3135 print#8,b$;
+ 3135 print#3,b$;
  3136 next:close8
  3140 print#3,chr$(255);:j%=0:j1%=0:open2,r1%,2,y$+":p/"+a1$+",s,r"
  3145 print"{home}{down}pass2  ":n1%=n%+111:n2%=n1%+15

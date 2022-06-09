@@ -105,4 +105,6 @@ if(typeof document !== 'undefined') {
   console.log("document.runit() to start")
 } else {
   main()
+  const fs = require('fs')
+  fs.writeFileSync('test_result.bin', pass2_result, {encoding: "ascii"});
 }
