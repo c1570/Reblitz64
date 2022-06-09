@@ -374,7 +374,7 @@
  2416 j$=chr$(166)+chr$(f6):return
  2417 f7=int(f6/256):j1%=f6-f7*256:j$=chr$(167)+chr$(f7)+chr$(j1%):return
  2418 z=f6:j$=chr$(168):f6=peek(45)+peek(46)*256+2
- 2419 forf6=f7tof7+4:j$=j$+chr$(peek(f6)):next:return
+ 2419 forf7=f6tof6+4:j$=j$+chr$(peek(f7)):next:return
  2420 ifc%>64andc%<91thenf4=0:f1%=c%:gosub2645:return
  2421 ifc%=170thensysm%:gosub2405:return
  2422 ifc%<=179orc%>=203goto2442:rem"else
