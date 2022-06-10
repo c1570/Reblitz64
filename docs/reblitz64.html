@@ -1,0 +1,35 @@
+<html>
+<body>
+<script src="output.js"></script>
+Check the console for output
+<form name="form_input" enctype="multipart/form-data">
+<input type="file" name="prg_file" id="prg_file" />
+<button type="button" onclick="compile()">Compile PRG</button>
+</form>
+<script>
+function compile() {
+  let files = document.getElementById("prg_file").files
+  for(let file of files) {
+    let reader = new FileReader();
+    reader.onload = (the_file => {
+      return function(e) {
+        input_prg = new Uint8Array(e.target.result)
+        main()
+        let element = document.createElement('a')
+        let data = new Uint8Array(pass2_result.length)
+        for(let i=0, len=pass2_result.length; i<len; i++) data[i]=pass2_result.charCodeAt(i)
+        let blob = new Blob([data.buffer], {type: "application/octet-binary"})
+        element.setAttribute('href', window.URL.createObjectURL(blob))
+        element.setAttribute('download', "result.prg")
+        element.style.display = 'none'
+        document.body.appendChild(element)
+        element.click()
+        document.body.removeChild(element)
+      }
+    })(file)
+    reader.readAsArrayBuffer(file)
+  }
+}
+</script>
+</body>
+</html>
