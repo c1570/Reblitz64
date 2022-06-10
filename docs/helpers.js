@@ -61,8 +61,9 @@ function float2string(f) {
   let b_buf = new Uint32Array(f_buf.buffer)
   let sign_1b = b_buf[1] >> 31
   let exponent_11b = ((b_buf[1] >> 20) & 0x7ff) - 1023
-  let fraction_31b = ((b_buf[1] & 0xfffff) << 11) + (b_buf[0] >> 20) // implicit leading 1
-  let c64_b1 = exponent_11b + 128
+  let fraction_31b = ((b_buf[1] & 0xfffff) << 11) | (b_buf[0] >>> 21) // implicit leading 1
+  if((b_buf[0] >>> 19 & 3) >= 1) fraction_31b++ // rounding
+  let c64_b1 = exponent_11b + 129
   let c64_b2 = (sign_1b << 7) + (fraction_31b >> 24)
   let c64_b3 = (fraction_31b >> 16) & 0xff
   let c64_b4 = (fraction_31b >> 8) & 0xff
