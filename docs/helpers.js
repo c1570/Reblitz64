@@ -86,16 +86,6 @@ function sys_p2_char_write() {
   pass2_result = pass2_result + String.fromCharCode(var_C1int)
 }
 
-function print_pass2_result() {
-  let res = ''
-  for(i=0; i<pass2_result.length; i++) {
-    if(i%16==0) res = res + "\n"
-    res = res + ("0" + pass2_result.charCodeAt(i).toString(16)).slice(-2) + " "
-  }
-  console.log(res)
-  console.log(`Result length is ${pass2_result.length} bytes`)
-}
-
 function c64_parse_float(s) {
   if(s == ".") return 0
   return parseFloat(s)
@@ -105,7 +95,11 @@ if(typeof document !== 'undefined') {
   document.runit = main
   console.log("document.runit() to start")
 } else {
+  let start = performance.now()
   main()
+  console.log(`Running took ${(performance.now() - start)>>>0}ms`)
+  console.log(`Result length is ${pass2_result.length} bytes`)
   const fs = require('fs')
-  fs.writeFileSync('test_result.bin', pass2_result, {encoding: "ascii"});
+  fs.writeFileSync('test_p1_result.bin', pass1_result, {encoding: "ascii"});
+  fs.writeFileSync('test_p2_result.bin', pass2_result, {encoding: "ascii"});
 }

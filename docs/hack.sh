@@ -8,15 +8,7 @@ echo "let data_index = 0" >> output.js
 echo "let pass2_result = ''" >> output.js
 node_modules/.bin/js-beautify output.txt >> output.js
 
-#echo 'let input_prg = new Uint8Array([0x01, 0x08, 0x16,0x08,0x64,0x00,0x41,0xb2,0x41,0xaa,0x31,0x3a,0x8b,0x41,0xb3,0x31,0x30,0x30,0x89,0x31,0x30,0x30,0x00,0x00,0x00])' >> output.js
-echo -e '\nlet input_prg = new Uint8Array([' >> output.js
-cat test-input.prg | ./hex >> output.js
-echo '])' >> output.js
 
-echo 'let runtime = new Uint8Array([' >> output.js
-dd if=0_blitz_orig.prg bs=1 count=6036 | ./hex >> output.js
-echo '])' >> output.js
-cat helpers.js >> output.js
 
 perl -i -pe 's/  user_prompt_mode\(\)/var_Tint=1; var_Ystr=""; var_Tstr="(prog. mode : 1)"/gm' output.js
 perl -i -pe 's/  GOTO/\/\/GOTO/gm' output.js
@@ -34,7 +26,7 @@ perl -i -pe 's/\/\/SYS  var_Mint \+3/sys_chrget3()/gm' output.js
 perl -i -pe 's/\/\/SYS  var_Mint/sys_chrget()/gm' output.js
 perl -i -pe 's/\/\/SYS  var_Nint/sys_find_in_array()/gm' output.js
 perl -i -pe 's/var_B1 \= ASC.*$/\/\/ var_B1 is taken care of in sys_read_line/gm' output.js
-perl -i -pe 's/var_L2int = ASC\(MID\$\(var_I1strarr\[var_I4\], 2\)\)/var_L2int = var_I1strarr\[var_I4\].charCodeAt(2-1)/gm' output.js
+perl -i -pe 's/var_L2int = Math.floor\(ASC\(MID\$\(var_I1strarr\[var_I4\], 2\)\)\)/var_L2int = var_I1strarr\[var_I4\].charCodeAt(2-1)/gm' output.js
 perl -i -pe 's/var_F = ASC\(var_Fstr\) \* 256 \+ ASC\(MID\$\(var_Fstr, 2\)\)/var_F = var_Fstr.charCodeAt(0) * 256 + var_Fstr.charCodeAt(2-1)/gm' output.js
 perl -i -pe 's/MID\$\((.*?),(.*?)\)/\1.substr(\2-1)/gm' output.js
 perl -i -pe 's/ASC\((.*?)\)/\1.charCodeAt(0)/gm' output.js
@@ -62,6 +54,14 @@ perl -i -pe 's/\/\/GET \#8, (.*)/\1 = data_values.substr(data_index, 1); data_in
 perl -i -pe 's/\/\/SYS  var_N1int/sys_p2_char_read()/gm' output.js
 perl -i -pe 's/\/\/SYS  var_N2int/sys_p2_char_write()/gm' output.js
 
-perl -i -pe 's/END/print_pass2_result()/gm' output.js
+
+echo -e '\nlet input_prg = new Uint8Array([' >> output.js
+cat test-input.prg | ./hex >> output.js
+echo '])' >> output.js
+
+echo 'let runtime = new Uint8Array([' >> output.js
+dd if=0_blitz_orig.prg bs=1 count=6036 | ./hex >> output.js
+echo '])' >> output.js
+cat helpers.js >> output.js
 
 node output.js
