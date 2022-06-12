@@ -91,10 +91,17 @@ function c64_parse_float(s) {
   return parseFloat(s)
 }
 
+let scr_output = ""
+
+function c64_print(s) {
+  scr_output = scr_output + s + "\n"
+}
+
 if(typeof document !== 'undefined') {
   document.runit = main
   console.log("document.runit() to start")
 } else {
+  c64_print = console.log
   let start = performance.now()
   main()
   console.log(`Running took ${(performance.now() - start)>>>0}ms`)

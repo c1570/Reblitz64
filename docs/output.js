@@ -2,6 +2,7 @@ let pass1_result = ''
 let data_values = ''
 let data_index = 0
 let pass2_result = ''
+let total_array_size = 0
 let var_A = 0
 let var_A1str = ""
 let var_A2str = ""
@@ -128,7 +129,7 @@ function main() {
     var_Nint = Math.floor(var_Mint + 141)
     var_Qint = 31020
     var_Q = 0
-    console.log(  String.fromCharCode (14))
+    c64_print(  String.fromCharCode (14))
     var_Ystr = "1"
     var_Rint = 8
     var_R1int = 8
@@ -150,11 +151,11 @@ function main() {
     //OPEN 14, var_Rint ,15
     //CLOSE 15
     //OPEN 15, var_R1int ,15
-    var_Xstr = "&#xEE93;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;"
+    var_Xstr = ""
   var_Tint=1; var_Ystr=""; var_Tstr="(prog. mode : 1)"
     if (var_Tint == 1) {
         //PRINT# 15,"I"+ var_Ystr 
-        //INPUT# "&#xEE93;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;&#xEE91;FILENAME    :"; var_Astr 
+        //INPUT# "FILENAME    :"; var_Astr 
         var_A2str = "C/" + var_Astr.substr(0,  14)
         var_TIstr = "000000"
         compile_programs()
@@ -166,18 +167,18 @@ function main() {
     }
     var_A = 0
     var_A5str = "OK"
-    console.log( "&#xEE93;")
-    console.log(   var_Xstr .substr(0, 6+ var_X2 ))
-    console.log(  "   ")
-    console.log( "&#xEE92;")
-    console.log(  var_A )
-    console.log(  var_A5str )
+    c64_print( "")
+    c64_print(   var_Xstr .substr(0, 6+ var_X2 ))
+    c64_print(  "   ")
+    c64_print( "")
+    c64_print(  var_A )
+    c64_print(  var_A5str )
     //CLOSE 2
     //CLOSE 3
     //CLOSE 4
     //CLOSE 15
     for (var_A = 0; var_A <= 5; var_A++) {
-        console.log(  String.fromCharCode (7))
+        c64_print(  String.fromCharCode (7))
     }
     console.log('END')
 }
@@ -201,7 +202,7 @@ function compile_programs() {
         } else {
             var_T2int = Math.floor(var_T2int + 1)
         }
-        console.log(  String.fromCharCode (7))
+        c64_print(  String.fromCharCode (7))
         var_Kint = 0
         var_B5int = 0
         var_B2int = 0
@@ -246,14 +247,14 @@ function pass1() {
     var_X2 = 0
     var_X3 = 0
     var_X4 = 0
-    console.log( "&#xEE93;&#xEE91;&#xEE91;")
-    console.log(  "   ")
-    console.log( "PROGRAM:  ")
-    console.log(  var_Astr )
+    c64_print( "")
+    c64_print(  "   ")
+    c64_print( "PROGRAM:  ")
+    c64_print(  var_Astr )
     if (var_T8int) {
-        console.log( "&#xEE93;PASS0")
+        c64_print( "PASS0")
     } else {
-        console.log( "&#xEE93;PASS1")
+        c64_print( "PASS1")
     }
     var_Cint = 0
     var_C2int = 1
@@ -274,8 +275,8 @@ function pass1() {
             }
             var_C1int = 3
             // var_B1 is taken care of in sys_read_line
-            console.log( "&#xEE93;&#xEE91;")
-            console.log(  var_B1 )
+            c64_print( "")
+            c64_print(  var_B1 )
             var_Dintarr[var_B5int] = var_B1 - 32767
             var_Cintarr[var_B5int] = var_Eint
             var_B5int = Math.floor(var_B5int + 1)
@@ -697,7 +698,7 @@ function p1_dim() {
             var_J1int = Math.floor(var_H1intarr[var_H1] & 255)
             var_H1intarr[var_H1] = var_J1int
             var_Istr = var_Istr + String.fromCharCode(16) + String.fromCharCode(var_J1int) + var_Fstr
-            var_G1 = var_H1 * 2 + 7
+            var_G1 = var_H1 * 2 + 7; total_array_size += var_G1;
             var_F = Math.floor(var_G1 / 256)
             var_J1int = Math.floor(var_G1 - var_F * 256)
             var_Istr = var_Istr + String.fromCharCode(var_F) + String.fromCharCode(var_J1int)
@@ -1997,10 +1998,10 @@ function pass2() {
                     }
                     var_Estr = String.fromCharCode(var_L2int & 127) + var_Jstr + var_Estr
                     var_X3 = var_X3 + 1
-                    console.log(   var_Xstr .substr(0, 5+ var_X2 ))
-                    console.log(  "   ")
-                    console.log( "?BAD SUBSCRIPT ERROR FRM ")
-                    console.log(  var_Estr )
+                    c64_print(   var_Xstr .substr(0, 5+ var_X2 ))
+                    c64_print(  "   ")
+                    c64_print( "?BAD SUBSCRIPT ERROR FRM ")
+                    c64_print(  var_Estr )
                     sub_3380()
                 }
             }
@@ -2082,7 +2083,7 @@ function pass2() {
     var_Jint = 0
     var_J1int = 0
     //OPEN 2, var_R1int ,2, var_Ystr +":P/"+ var_A1str +",S,R"
-    console.log( "&#xEE93;&#xEE91;PASS2  ")
+    c64_print( "PASS2  ")
     var_N1int = Math.floor(var_Nint + 111)
     var_N2int = Math.floor(var_N1int + 15)
     for (var_L = 0; var_L <= var_Eint - 1; var_L++) {
@@ -2091,8 +2092,8 @@ function pass2() {
         if (!(var_Lint < var_Cintarr[var_Jint] || var_Jint == var_B5int)) {
             do {
                 if (var_Jint < var_B5int) {
-                    console.log( "&#xEE93;&#xEE91;&#xEE91;")
-                    console.log(  var_Dintarr[ var_Jint ]+32767)
+                    c64_print( "")
+                    c64_print(  var_Dintarr[ var_Jint ]+32767)
                     var_Jint = Math.floor(var_Jint + 1)
                 }
                 if (var_Lint < var_Cintarr[var_Jint]) {
@@ -2102,7 +2103,7 @@ function pass2() {
             if (!(var_Tint > 1)) {
                 var_L3int = (var_Lint + var_Cint) / 256
                 var_L2int = Math.floor(var_Lint + var_Cint - var_L3int * 256)
-                //PRINT# 6, String.fromCharCode (4);
+                c64_print("P-Code offset: " + (var_L2int+var_L3int*256))
                 //PRINT# 6, String.fromCharCode (8);
                 //PRINT# 6, String.fromCharCode ( var_L2int );
                 //PRINT# 6, String.fromCharCode ( var_L3int );
@@ -2158,12 +2159,12 @@ function pass2() {
         }
     }
     //CLOSE 3
-    console.log(   var_Xstr .substr(0, 5+ var_X2 ))
-    console.log(  "   ")
-    console.log( "ERRORS:")
-    console.log(  var_X1 + var_X3 )
-    console.log( "     EXTENSIONS:")
-    console.log(  var_X0 )
+    c64_print(   var_Xstr .substr(0, 5+ var_X2 ))
+    c64_print(  "   ")
+    c64_print( "ERRORS:")
+    c64_print(  var_X1 + var_X3 )
+    c64_print( "     EXTENSIONS:")
+    c64_print(  var_X0 )
     //PRINT# 15,"S"+ var_Ystr +":P/"+ var_A1str 
     //PRINT# 15,"S"+ var_Ystr +":D/"+ var_A1str 
     return
@@ -2197,11 +2198,11 @@ function get_drive_status() {
         return
     }
     var_X2 = 15
-    console.log(   var_Xstr .substr(0, 6+ var_X2 ))
-    console.log(  "   ")
-    console.log( "&#xEE92;")
-    console.log(  var_A )
-    console.log(  var_A5str )
+    c64_print(   var_Xstr .substr(0, 6+ var_X2 ))
+    c64_print(  "   ")
+    c64_print( "")
+    c64_print(  var_A )
+    c64_print(  var_A5str )
     //CLOSE 2
     //CLOSE 3
     //CLOSE 4
@@ -2259,12 +2260,12 @@ function note_error_read_next_char() {
 }
 
 function print_error() {
-    console.log(   var_Xstr .substr(0, 5+ var_X2 ))
-    console.log(  "   ")
-    console.log( "?")
-    console.log(  var_X1str )
-    console.log( " IN")
-    console.log(  var_B1 )
+    c64_print(   var_Xstr .substr(0, 5+ var_X2 ))
+    c64_print(  "   ")
+    c64_print( "?")
+    c64_print(  var_X1str )
+    c64_print( " IN")
+    c64_print(  var_B1 )
     sub_3380()
     return
 }
@@ -2282,11 +2283,11 @@ function sub_3380() {
 }
 
 function print_screen_title() {
-    console.log( "&#xEEd3;")
-    console.log(  "   ")
-    console.log( "SKYLES - BLITZ")
-    console.log(  "   ")
-    console.log(  var_Tstr )
+    c64_print( "")
+    c64_print(  "   ")
+    c64_print( "SKYLES - BLITZ")
+    c64_print(  "   ")
+    c64_print(  var_Tstr )
     return
 }
 
@@ -2301,9 +2302,9 @@ function sub_3400() {
 }
 
 function user_prompt_mode() {
-    console.log( "&#xEE93;&#xEE91;&#xEE91;&#xEE91;&#xEE91;1 = SINGLE FLOPPY")
-    console.log( "&#xEE91;&#xEE91;2 = DUAL DRIVE FLOPPY")
-    console.log( "&#xEE91;&#xEE91;3 = 2 FLOPPIES WITH DIFFERENT ADDR'S  ")
+    c64_print( "1 = SINGLE FLOPPY")
+    c64_print( "2 = DUAL DRIVE FLOPPY")
+    c64_print( "3 = 2 FLOPPIES WITH DIFFERENT ADDR'S  ")
     do {
         //GET  var_Tint 
         if (var_Tint >= 1 && var_Tint <= 3) {
@@ -2323,33 +2324,33 @@ function user_prompt_mode() {
             var_Bstr = "DEVICE" + (var_R1int)
         }
         print_screen_title()
-        console.log( "&#xEE93;&#xEE91;&#xEE91;")
-        console.log(  "   ")
-        console.log( "SELECT MODE :")
-        console.log( "&#xEE91;&#xEE91;1. =//ONE FILE TO DRIVE 1      ")
-        console.log( "&#xEE91;&#xEE91;2. =  ALL FILES FROM     ")
-        console.log(  var_Astr )
-        console.log( " TO ")
-        console.log( "      BLANK DISKETTE IN ")
-        console.log(  var_Bstr )
-        console.log( " WTH")
-        console.log( "      COMP-MACHINECODE      ")
-        console.log( "&#xEE91;&#xEE91;3. =  ALL FILES FROM     ")
-        console.log(  var_Astr )
-        console.log( " TO ")
-        console.log( "      BLANK DISKETTE IN ")
-        console.log(  var_Bstr )
-        console.log( ", BUT")
-        console.log( "      FIRST FILE WITH COMP-BLOCK    ")
-        console.log( "&#xEE91;&#xEE91;4. =  ALL FILES FROM     ")
-        console.log(  var_Astr )
-        console.log( " TO ")
-        console.log( "      BLANK DISKETTE IN ")
-        console.log(  var_Bstr )
-        console.log( " WTH")
-        console.log( "      OVERLAY")
-        console.log(  var_Xstr )
-        console.log( "PLEASE SELECT!")
+        c64_print( "")
+        c64_print(  "   ")
+        c64_print( "SELECT MODE :")
+        c64_print( "1. =//ONE FILE TO DRIVE 1      ")
+        c64_print( "2. =  ALL FILES FROM     ")
+        c64_print(  var_Astr )
+        c64_print( " TO ")
+        c64_print( "      BLANK DISKETTE IN ")
+        c64_print(  var_Bstr )
+        c64_print( " WTH")
+        c64_print( "      COMP-MACHINECODE      ")
+        c64_print( "3. =  ALL FILES FROM     ")
+        c64_print(  var_Astr )
+        c64_print( " TO ")
+        c64_print( "      BLANK DISKETTE IN ")
+        c64_print(  var_Bstr )
+        c64_print( ", BUT")
+        c64_print( "      FIRST FILE WITH COMP-BLOCK    ")
+        c64_print( "4. =  ALL FILES FROM     ")
+        c64_print(  var_Astr )
+        c64_print( " TO ")
+        c64_print( "      BLANK DISKETTE IN ")
+        c64_print(  var_Bstr )
+        c64_print( " WTH")
+        c64_print( "      OVERLAY")
+        c64_print(  var_Xstr )
+        c64_print( "PLEASE SELECT!")
         do {
             //GET  var_Tint 
             if (var_Tint >= 1 && var_Tint <= 4) {
@@ -2365,10 +2366,10 @@ function user_prompt_mode() {
     if (var_Tint == 1) {
         return
     }
-    console.log( "&#xEE91;&#xEE91;&#xEE49;N ")
-    console.log(  var_Astr )
-    console.log( " INSERT DISKETTE WITH SOURCE FOR COMPILATION     ")
-    console.log( "&#xEE91;PRESS    &#xEE92;Y&#xEEd2;  WHEN READY ")
+    c64_print( "N ")
+    c64_print(  var_Astr )
+    c64_print( " INSERT DISKETTE WITH SOURCE FOR COMPILATION     ")
+    c64_print( "PRESS    Y  WHEN READY ")
     do {
         //GET  var_Astr 
         if (var_Astr == "Y") {
@@ -2379,10 +2380,10 @@ function user_prompt_mode() {
     var_R3int = 14
     get_drive_status()
     var_R3int = 15
-    console.log( "&#xEE91;&#xEE91;&#xEE49;N ")
-    console.log(  var_Bstr )
-    console.log( " INSERT BLANK DISKETTE ! ")
-    console.log( "&#xEE91;WANT TO NEW DISKETTE            &#xEE92;Y&#xEEd2;ES/&#xEE92;N&#xEEd2;O ")
+    c64_print( "N ")
+    c64_print(  var_Bstr )
+    c64_print( " INSERT BLANK DISKETTE ! ")
+    c64_print( "WANT TO NEW DISKETTE            YES/NO ")
     do {
         //GET  var_Astr 
         if (var_Astr == "Y" || var_Astr == "N") {
@@ -2390,7 +2391,7 @@ function user_prompt_mode() {
         }
     } while (true)
     if (!(var_Astr != "Y")) {
-        console.log( "&#xEE91;FORMATTING DISKETTE !    ")
+        c64_print( "FORMATTING DISKETTE !    ")
         //OPEN 9, var_Rint ,0,"$0"
         var_R3int = 14
         get_drive_status()
@@ -2511,15 +2512,15 @@ function read_drive_directory_entry() {
 function user_prompt_drives() {
     var_R1int = 9
     print_screen_drives()
-    console.log(   var_Xstr .substr(0, 15))
-    console.log(  "   ")
+    c64_print(   var_Xstr .substr(0, 15))
+    c64_print(  "   ")
     //INPUT#  var_Rint 
     if (var_Rint < 4 || var_Rint > 15) {
       //GOTO 3725
     }
     print_screen_drives()
-    console.log(   var_Xstr .substr(0, 17))
-    console.log(  "   ")
+    c64_print(   var_Xstr .substr(0, 17))
+    c64_print(  "   ")
     //INPUT#  var_R1int 
     if (var_R1int < 4 || var_R1int > 15) {
       //GOTO 3735
@@ -2532,12 +2533,12 @@ function user_prompt_drives() {
 }
 
 function print_screen_drives() {
-    console.log(   var_Xstr .substr(0, 15))
-    console.log( "DEVICE-NBR. SOURCE PROG. :  ")
-    console.log(  var_Rint )
-    console.log(   var_Xstr .substr(0, 17))
-    console.log( "DEVICE-NBR. COMPILED PROG. :")
-    console.log(  var_R1int )
+    c64_print(   var_Xstr .substr(0, 15))
+    c64_print( "DEVICE-NBR. SOURCE PROG. :  ")
+    c64_print(  var_Rint )
+    c64_print(   var_Xstr .substr(0, 17))
+    c64_print( "DEVICE-NBR. COMPILED PROG. :")
+    c64_print(  var_R1int )
     return
 }
 let input_prg = new Uint8Array([
@@ -3016,10 +3017,17 @@ function c64_parse_float(s) {
   return parseFloat(s)
 }
 
+let scr_output = ""
+
+function c64_print(s) {
+  scr_output = scr_output + s + "\n"
+}
+
 if(typeof document !== 'undefined') {
   document.runit = main
   console.log("document.runit() to start")
 } else {
+  c64_print = console.log
   let start = performance.now()
   main()
   console.log(`Running took ${(performance.now() - start)>>>0}ms`)

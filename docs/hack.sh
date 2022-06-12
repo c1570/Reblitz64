@@ -6,6 +6,7 @@ echo "let pass1_result = ''" > output.js
 echo "let data_values = ''" >> output.js
 echo "let data_index = 0" >> output.js
 echo "let pass2_result = ''" >> output.js
+echo "let total_array_size = 0" >> output.js
 node_modules/.bin/js-beautify output.txt >> output.js
 
 
@@ -14,7 +15,7 @@ perl -i -pe 's/  user_prompt_mode\(\)/var_Tint=1; var_Ystr=""; var_Tstr="(prog. 
 perl -i -pe 's/  GOTO/\/\/GOTO/gm' output.js
 perl -i -pe 's/  ON/\/\/ON/gm' output.js
 perl -i -pe 's/console.log(.*)\;$/console.log\1/gm' output.js
-perl -i -pe 's/\/\/console.log(.*)/console.log(\1)/gm' output.js
+perl -i -pe 's/\/\/console.log(.*)/c64_print(\1)/gm' output.js
 perl -i -pe 's/LEFT\$ \(/LEFT\$(/gm' output.js
 perl -i -pe 's/LEFT\$\((.*?),(.*?)\)/\1.substr(0, \2)/gm' output.js
 perl -i -pe 's/PEEK\((.*?)\)/0 \/* PEEK \1 *\//gm' output.js
@@ -54,6 +55,10 @@ perl -i -pe 's/\/\/GET \#8, (.*)/\1 = data_values.substr(data_index, 1); data_in
 perl -i -pe 's/\/\/SYS  var_N1int/sys_p2_char_read()/gm' output.js
 perl -i -pe 's/\/\/SYS  var_N2int/sys_p2_char_write()/gm' output.js
 
+# Just output P-Code offset to screen instead of Z/... file
+perl -i -pe 's/\/\/PRINT\# 6, String\.fromCharCode \(4\)\;/c64_print("P-Code offset: " + (var_L2int+var_L3int*256))/gm' output.js
+# Keep track of DIMs
+perl -i -pe 's/var_G1 = var_H1 \* 2 \+ 7/var_G1 = var_H1 \* 2 \+ 7; total_array_size += var_G1;/gm' output.js
 
 echo -e '\nlet input_prg = new Uint8Array([' >> output.js
 cat test-input.prg | ./hex >> output.js

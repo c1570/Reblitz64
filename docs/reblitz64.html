@@ -1,11 +1,14 @@
 <html>
 <body>
+<h2>Reblitz64</h2>
+<a href="https://github.com/c1570/Reblitz64">github.com/c1570/Reblitz64</a>
 <script src="output.js"></script>
-Check the console for output
 <form name="form_input" enctype="multipart/form-data">
 <input type="file" name="prg_file" id="prg_file" />
 <button type="button" onclick="compile()">Compile PRG</button>
 </form>
+<div id="scr_output">
+</div>
 <script>
 function compile() {
   let files = document.getElementById("prg_file").files
@@ -15,6 +18,9 @@ function compile() {
       return function(e) {
         input_prg = new Uint8Array(e.target.result)
         main()
+        scr_output = `Runtime length: ${var_T1int}\nP-Code length: ${var_Eint}\nPlain variable length: ${var_G*7}\n` + scr_output  // Arrays: about ${total_array_size}\nRemaining: ${39811-var_T1int-var_Eint-var_G*7-total_array_size}\n
+        document.getElementById("scr_output").innerHTML = scr_output.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll("\n", "<br/>")
+        if(var_X1+var_X3>0) return
         let element = document.createElement('a')
         let data = new Uint8Array(pass2_result.length)
         for(let i=0, len=pass2_result.length; i<len; i++) data[i]=pass2_result.charCodeAt(i)
