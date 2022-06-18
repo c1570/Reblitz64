@@ -1,3 +1,4 @@
+let input_prg = []
 let cur_input_idx = 2
 
 function sys_read_line() {
@@ -98,15 +99,17 @@ function c64_print(s) {
 }
 
 if(typeof document !== 'undefined') {
-  document.runit = main
-  console.log("document.runit() to start")
+  document.run_it = main
+  console.log("document.run_it() to start")
 } else {
+  const fs = require('fs')
+  input_prg = fs.readFileSync(process.argv[2], null)
+  console.log(`Reading file ${process.argv[2]}, length ${input_prg.length}`)
   c64_print = console.log
   let start = performance.now()
   main()
   console.log(`Running took ${(performance.now() - start)>>>0}ms`)
   console.log(`Result length is ${pass2_result.length} bytes`)
-  const fs = require('fs')
-  fs.writeFileSync('test_p1_result.bin', pass1_result, {encoding: "ascii"});
-  fs.writeFileSync('test_p2_result.bin', pass2_result, {encoding: "ascii"});
+  // fs.writeFileSync('test_p1_result.bin', pass1_result, {encoding: "ascii"});
+  fs.writeFileSync(process.argv[3], pass2_result, {encoding: "ascii"});
 }

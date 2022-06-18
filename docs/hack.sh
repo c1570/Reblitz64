@@ -60,13 +60,9 @@ perl -i -pe 's/\/\/PRINT\# 6, String\.fromCharCode \(4\)\;/c64_print("P-Code off
 # Keep track of DIMs
 perl -i -pe 's/var_G1 = var_H1 \* 2 \+ 7/var_G1 = var_H1 \* 2 \+ 7; total_array_size += var_G1;/gm' output.js
 
-echo -e '\nlet input_prg = new Uint8Array([' >> output.js
-cat test-input.prg | ./hex >> output.js
-echo '])' >> output.js
-
 echo 'let runtime = new Uint8Array([' >> output.js
 dd if=0_blitz_orig.prg bs=1 count=6036 | ./hex >> output.js
 echo '])' >> output.js
 cat helpers.js >> output.js
 
-node output.js
+node output.js test-input.prg test-output.prg
