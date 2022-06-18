@@ -73,9 +73,9 @@ var,L%,
 var,L2%,var type - 255 iff string??
 var,L3%,tmp or var type - 128 iff integer??
 var,M%,start addr of current BASIC line data helper
-var,N%,start addr of disk read/write helper
-var,N1%,
-var,N2%,
+var,N%,start addr of array search helper - C5% array - C6% search_for - C7% array size - C5% result index or -1
+var,N1%,start addr of read byte from file 2 helper to C1%
+var,N2%,start addr of write byte from C1% to file 3 helper
 var,Q%,
 var,Q,
 var,R%,source floppy device number
