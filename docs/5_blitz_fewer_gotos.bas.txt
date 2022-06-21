@@ -279,15 +279,14 @@
  2055 f5=0:sysm%:ifc3%theni$=chr$(63):return
  2056 gosub2060:return
 
- 2060 j%=0
- 2061 i$="":rem"do
- 2062 ifj%=0andc%=163thenj%=65
+ 2060 j%=0:i$=""
+ 2061 ifj%=0andc%=163thenj%=65:rem"do
  2065 ifj%=0andc%<>163andc%<>166andc%<>59goto2100:rem"else
  2066 ifj%=0andc%<>163andc%<>166andc%=59goto2090:rem"else
  2075 ifj%=65orj%=0thensysm%:gosub2270:ifc%<>41thenreturn
  2076 ifj%=0thenj%=64
  2081 i$=i$+chr$(j%):gosub2920
- 2090 sysm%:ifc3%=0thenj%=0:goto2061:rem"continue
+ 2090 sysm%:ifc3%=0thenj%=0:i$="":goto2061:rem"continue
  2091 iff5theni$=chr$(69):return
  2092 er%=-1:return
 
@@ -296,7 +295,7 @@
  2106 j%=62:iff5thenj%=67
  2107 i$=i$+chr$(j%):return
  2110 ifc%=44thenj%=61:goto2061:rem"continue
- 2115 i$=i$+chr$(60):gosub2920:j%=0:goto2061:rem"while(true)
+ 2115 i$=i$+chr$(60):gosub2920:j%=0:i$="":goto2061:rem"while(true)
 
  2140 sysm%:f5=1:gosub2270:ifl2%thener%=2:return
  2145 e$=i$+chr$(96):ifc3%goto2195:rem"else
