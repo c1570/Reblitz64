@@ -73,4 +73,5 @@ run_test () {
 run_test gq6
 run_test monopoly
 run_test commtown
+run_test oversized
 echo "*** Tests passed"
