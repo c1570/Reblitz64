@@ -65,4 +65,12 @@ dd if=0_blitz_orig.prg bs=1 count=6036 | ./hex >> output.js
 echo '])' >> output.js
 cat helpers.js >> output.js
 
-node output.js test-input.prg test-output.prg
+echo "*** Run tests"
+run_test () {
+  node output.js ../tests/test-$1.prg /tmp/outp2-$1.prg
+  if ! cmp ../tests/outp2-$1.prg /tmp/outp2-$1.prg; then echo "test-$1 failed"; exit 1; fi
+}
+run_test gq6
+run_test monopoly
+run_test commtown
+echo "*** Tests passed"

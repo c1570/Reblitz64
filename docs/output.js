@@ -1181,8 +1181,8 @@ function p1_print() {
 
 function sub_2060() {
     var_Jint = 0
+    var_Istr = ""
     do {
-        var_Istr = ""
         if (var_Jint == 0 && var_Cint == 163) {
             var_Jint = 65
         }
@@ -1204,6 +1204,7 @@ function sub_2060() {
             sys_chrget() 
             if (var_C3int == 0) {
                 var_Jint = 0
+                var_Istr = ""
                 continue
             }
             if (var_F5) {
@@ -1233,6 +1234,7 @@ function sub_2060() {
         var_Istr = var_Istr + String.fromCharCode(60)
         write_pcode()
         var_Jint = 0
+        var_Istr = ""
     } while (true)
 }
 
@@ -2540,12 +2542,7 @@ function print_screen_drives() {
     c64_print( "DEVICE-NBR. COMPILED PROG. :")
     c64_print(  var_R1int )
     return
-}
-let input_prg = new Uint8Array([
-0x01,0x08,0x0b,0x08,0x01,0x00,0x99,0x22,0x48,0x49,0x22,0x00,0x1c,0x08,0x02,0x00,
-0x81,0x49,0xb2,0x31,0xa4,0x31,0x30,0x3a,0x99,0x49,0x3a,0x82,0x00,0x27,0x08,0x03,
-0x00,0x99,0x22,0x42,0x59,0x45,0x22,0x00,0x00,0x00])
-let runtime = new Uint8Array([
+}let runtime = new Uint8Array([
 0x01,0x08,0x1a,0x08,0x01,0x00,0x9e,0x32,0x30,0x37,0x36,0x14,0x14,0x14,0x14,0x14,
 0x14,0x14,0x14,0x14,0x42,0x4c,0x49,0x54,0x5a,0x21,0x00,0x00,0x00,0x4c,0x92,0x0c,
 0x4c,0xa7,0x0e,0x4c,0x81,0x0e,0x09,0x09,0x1e,0x1b,0x1b,0x1c,0x1c,0x0c,0x0c,0x18,
@@ -2924,6 +2921,7 @@ let runtime = new Uint8Array([
 0xac,0x0e,0x4c,0xef,0x19,0xea,0xea,0xea,0x4c,0x08,0xaf,0x20,0x26,0xb5,0xa5,0x33,
 0xa4,0x34,0x38,0xe5,0x61,0xb0,0x01,0x88,0xc4,0x32,0xd0,0x02,0xc5,0x31,0x90,0x01,
 0x60,0x4c,0x35,0xa4])
+let input_prg = []
 let cur_input_idx = 2
 
 function sys_read_line() {
@@ -3024,15 +3022,17 @@ function c64_print(s) {
 }
 
 if(typeof document !== 'undefined') {
-  document.runit = main
-  console.log("document.runit() to start")
+  document.run_it = main
+  console.log("document.run_it() to start")
 } else {
+  const fs = require('fs')
+  input_prg = fs.readFileSync(process.argv[2], null)
+  console.log(`Reading file ${process.argv[2]}, length ${input_prg.length}`)
   c64_print = console.log
   let start = performance.now()
   main()
   console.log(`Running took ${(performance.now() - start)>>>0}ms`)
   console.log(`Result length is ${pass2_result.length} bytes`)
-  const fs = require('fs')
-  fs.writeFileSync('test_p1_result.bin', pass1_result, {encoding: "ascii"});
-  fs.writeFileSync('test_p2_result.bin', pass2_result, {encoding: "ascii"});
+  // fs.writeFileSync('test_p1_result.bin', pass1_result, {encoding: "ascii"});
+  fs.writeFileSync(process.argv[3], pass2_result, {encoding: "ascii"});
 }
