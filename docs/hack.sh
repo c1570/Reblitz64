@@ -64,10 +64,11 @@ echo 'let runtime = new Uint8Array([' >> output.js
 dd if=0_blitz_orig.prg bs=1 count=6036 | ./hex >> output.js
 echo '])' >> output.js
 cat helpers.js >> output.js
+mv output.js reblitz64.js
 
 echo "*** Run tests"
 run_test () {
-  node output.js ../tests/test-$1.prg /tmp/outp2-$1.prg
+  node reblitz64.js ../tests/test-$1.prg /tmp/outp2-$1.prg
   if ! cmp ../tests/outp2-$1.prg /tmp/outp2-$1.prg; then echo "test-$1 failed"; exit 1; fi
 }
 run_test gq6
