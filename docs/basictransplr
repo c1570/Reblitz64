@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# BASIC transplr. Transforms well-formed BASIC V2 to something weird.
+# BASIC transplr. Transforms well-formed C64 BASIC V2 to something weird.
 # https://github.com/c1570/Reblitz64
 
 import csv
@@ -52,115 +52,9 @@ class Element:
         return f"Element {self.data}"
 
 
-class ElementPrint(Element):
-    def __init__(self, data):
-        self.data = data
-        data = data.replace(b'""',
-                            b'')  # this replaces "" only in internal representation, will not get serialized later
-        self.is_constant = data[1:2] == b'"' and (data[-2:] == b'";' or data[-1:] == b'"') and b'"' not in data[2:-2]
-        if self.is_constant:
-            if data[-2:] == b'";':
-                self.constant = data[2:-2]
-            else:
-                self.constant = data[2:-1] + b'\x0d'
-
-    def __str__(self):
-        return f"PRINT {self.data}"
-
-
-class ElementSys(Element):
-    def __init__(self, data: bytearray = None, addr: int = None):
-        if data is not None:
-            self.data = data
-        elif addr is not None:
-            self.data = bytearray([158] + bytes(str(addr), "ascii"))
-        else:
-            assert False
-        self.is_sysq = False
-        self.is_simple_sysq = False
-        if self.data[1] != 0x51:
-            return
-        pars = self.data[1:].split(b',')
-        if len(pars) < 4:
-            return
-        self.is_sysq = pars[0] == b'Q'
-        self.sysq_pars = pars[1:3]
-        str_par = self.data[len(pars[0]) + len(pars[1]) + len(pars[2]) + 4:]
-        str_par = str_par.replace(b'""',
-                                  b'')  # this replaces "" only in internal representation, will not get serialized later
-        self.is_simple_sysq = self.is_sysq and str_par[0:1] == b'"' and (
-                    str_par[-2:] == b'";' or str_par[-1:] == b'"') and b'"' not in str_par[2:-2]
-        self.sysq_pars.append(str_par)
-        if self.is_simple_sysq:
-            if str_par[-2:] == b'";':
-                str_par = str_par[1:-2]
-            else:
-                str_par = str_par[1:-1] + b'\x0d'
-            self.constant = str_par
-            print(f"SIMPLE sysq_pars: {self.sysq_pars}")
-        else:
-            print(f"COMPLEX sysq_pars: {self.sysq_pars}")
-
-
-class ElementIf(Element):
-    pass
-
-
 def create_element(data):
-    if len(data) > 0:
-        if data[0] == 153:
-            return ElementPrint(data)
-        elif data[0] == 158:
-            return ElementSys(data)
-        elif data[0] == 139:
-            return ElementIf(data)
     return Element(data)
 
-
-CTRLCODE_TO_TITLE = {
-    3: "run/stop",
-    5: "white",
-    8: "disable toggle charset",
-    9: "enable toggle charset",
-    13: "return",
-    14: "toggle charset",
-    17: "down",
-    18: "reverse on",
-    19: "home",
-    20: "del",
-    28: "red",
-    29: "right",
-    30: "green",
-    31: "blue",
-    129: "orange",
-    131: "shift run/stop",
-    133: "f1",
-    134: "f3",
-    135: "f5",
-    136: "f7",
-    137: "f2",
-    138: "f4",
-    139: "f6",
-    140: "f8",
-    141: "shift return",
-    142: "upper caps/graphics",
-    144: "black",
-    145: "up",
-    146: "reverse off",
-    147: "clear",
-    148: "insert",
-    149: "brown",
-    150: "light red",
-    151: "grey 1",
-    152: "grey 2",
-    153: "light green",
-    154: "light blue",
-    155: "grey 3",
-    156: "purple",
-    157: "left",
-    158: "yellow",
-    159: "cyan"
-}
 
 all_variables = dict()
 
