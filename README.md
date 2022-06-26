@@ -88,10 +88,11 @@ For the JavaScript output, the original ASM helpers get replaced by custom JavaS
 [docs/hack.sh](docs/hack.sh) builds the JavaScript version of the compiler and contains a lot of regex nastiness to make it all work.
 
 ## Fixes and changes in Reblitz64
-* Pass 2 failed in case the generated P-code reached beyond $7FFF (overflow in `15139 l2%=c%(c5%)+c%:return`)
-* (TODO typo in variable)
-* (TODO broken comparison/variable count)
-* The `::` mechanism to pass any code to the original BASIC interpreter got removed.
+* Fixed: Pass 2 failed in case the generated P-code reached beyond $7FFF (overflow in `15139 l2%=c%(c5%)+c%:return`)
+* Fixed: Spaces in SYS parameters were not supported.
+* Fixed: (TODO typo in variable)
+* Fixed: (TODO broken comparison/variable count)
+* Removed: The `::` mechanism to pass any code to the original BASIC interpreter got removed.
 
 ## Notes
 * Want to force Blitz! to recognize one variable as integer (even though it isn't marked as such)?

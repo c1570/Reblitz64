@@ -75,4 +75,5 @@ run_test gq6
 run_test monopoly
 run_test commtown
 run_test oversized
+run_test sysq
 echo "*** Tests passed"

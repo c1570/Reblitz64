@@ -242,7 +242,7 @@
  1870 sysm%:gosub2270:ifl2%thener%=2:return
  1875 i$=i$+chr$(24)
  1880 ifc3%goto1890:rem"do,break
- 1885 i$=i$+chr$(c%):sysm%:goto1880:rem"while(true)
+ 1885 i$=i$+chr$(c%):sysm%+3:goto1880:rem"while(true)
  1890 i$=i$+chr$(58):return
 
  1910 e$=chr$(j%):f5=0:sysm%:ifc3%goto1955:rem"else

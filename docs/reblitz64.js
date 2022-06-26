@@ -1032,7 +1032,7 @@ function p1_sys() {
             break
         }
         var_Istr = var_Istr + String.fromCharCode(var_Cint)
-        sys_chrget() 
+        sys_chrget3()
     } while (true)
     var_Istr = var_Istr + String.fromCharCode(58)
     return
