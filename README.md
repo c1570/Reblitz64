@@ -16,6 +16,13 @@ Instead, the approach taken here was i) rewriting the original BASIC code to use
 
 This resulted in a somewhat readable and hackable result, and it's much faster than the emulation approach as well.
 
+### Benchmarks
+Compiling a [36 Kbytes PRG](tests/test-gq6.prg).
+* Blitz! (C64, C1541): about 1400 seconds
+* Blitz! in VICE (100% speed, without True Drive emulation): about 600 seconds
+* blitz 0.1: about 4.4 seconds
+* Reblitz64: about 0.18 seconds
+
 ## basictransplr
 A somewhat generic BASIC V2 transpiler can be found at [docs/basictransplr](docs/basictransplr).
 This was used to do the major work of porting the Blitz! compiler to JavaScript.
