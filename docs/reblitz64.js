@@ -2101,10 +2101,11 @@ function pass2() {
                     c64_print( "")
                     c64_print(  var_Dintarr[ var_Jint ]+32767)
                     var_Jint = Math.floor(var_Jint + 1)
+                    if (var_Lint >= var_Cintarr[var_Jint]) {
+                        continue
+                    }
                 }
-                if (var_Lint < var_Cintarr[var_Jint]) {
-                    break
-                }
+                break
             } while (true)
             if (!(var_Tint > 1)) {
                 var_L3int = (var_Lint + var_Cint) / 256

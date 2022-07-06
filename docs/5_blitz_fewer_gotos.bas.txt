@@ -528,8 +528,8 @@
  3145 print"{home}{down}pass2  ":n1%=n%+111:n2%=n1%+15
  3146 forl=0toe%-1:l%=l
  3150 sysn1%:ifl%<c%(j%)orj%=b5%goto3180:rem"else
- 3155 ifj%<b5%thenprint"{home}{down}{down}";:printd%(j%)+32767:j%=j%+1:rem"do
- 3156 ifl%<c%(j%)goto3160:rem"break
+ 3155 ifj%<b5%thenprint"{home}{down}{down}";:printd%(j%)+32767:j%=j%+1:ifl%>=c%(j%)goto3160:rem"do,continue
+ 3156 goto3160:rem"break
  3157 goto3155:rem"while(true)
  3160 ift%>1goto3180:rem"else
  3165 l3%=(l%+c%)/256:l2%=l%+c%-l3%*256:print#6,chr$(4);:print#6,chr$(8);
