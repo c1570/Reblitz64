@@ -1027,9 +1027,13 @@ function p1_sys() {
         return
     }
     var_Istr = var_Istr + String.fromCharCode(24)
+    var_Jint = 1
     do {
-        if (var_C3int) {
+        if ((var_Jint && var_C3int) || var_C2int) {
             break
+        }
+        if (var_Cint == 34) {
+            var_Jint = 1 - var_Jint
         }
         var_Istr = var_Istr + String.fromCharCode(var_Cint)
         sys_chrget3()
