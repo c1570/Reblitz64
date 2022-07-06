@@ -59,6 +59,9 @@ perl -i -pe 's/\/\/SYS  var_N2int/sys_p2_char_write()/gm' output.js
 perl -i -pe 's/\/\/PRINT\# 6, String\.fromCharCode \(4\)\;/c64_print("P-Code offset: " + (var_L2int+var_L3int*256))/gm' output.js
 # Keep track of DIMs
 perl -i -pe 's/var_G1 = var_H1 \* 2 \+ 7/var_G1 = var_H1 \* 2 \+ 7; total_array_size += var_G1;/gm' output.js
+# Use Int32Arrays for some arrays
+perl -i -pe 's/var_Cintarr = new Int16Array/var_Cintarr = new Int32Array/gm' output.js
+perl -i -pe 's/var_Bintarr = new Int16Array/var_Bintarr = new Int32Array/gm' output.js
 
 echo 'let runtime = new Uint8Array([' >> output.js
 dd if=0_blitz_orig.prg bs=1 count=6036 | ./hex >> output.js
