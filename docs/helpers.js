@@ -35,6 +35,19 @@ function int_sys_chrget(ignore_spaces) {
   return
 }
 
+function copy_extra_data() {
+  // called at beginning of pass2 to copy any trailing extra data to result file
+  cur_input_idx+=2
+  if(cur_input_idx < input_prg.length) {
+    c64_print(`Copying ${input_prg.length - cur_input_idx} bytes trailing the BASIC part to output.`)
+  }
+  while(cur_input_idx < input_prg.length) {
+    write_pcode()
+    var_Istr = String.fromCharCode(input_prg[cur_input_idx])
+    cur_input_idx++
+  }
+}
+
 function sys_find_in_array() {
   let arr = 0
   if(var_C5int == 10427) {
@@ -72,9 +85,9 @@ function float2string(f) {
   return String.fromCharCode(c64_b1) + String.fromCharCode(c64_b2) + String.fromCharCode(c64_b3) + String.fromCharCode(c64_b4) + String.fromCharCode(c64_b5)
 }
 
-for(let ch of runtime) {
-  pass2_result = pass2_result + String.fromCharCode(ch)
-}
+// adjust var_T1int to change length of runtime/offset of P-code
+// comment out the following line to exclude runtime from output
+for(let ch of runtime) { pass2_result = pass2_result + String.fromCharCode(ch) }
 
 let p2_cur_p1_result_idx = 0
 

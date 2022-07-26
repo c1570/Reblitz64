@@ -31,7 +31,7 @@ perl -i -pe 's/var_L2int = Math.floor\(ASC\(MID\$\(var_I1strarr\[var_I4\], 2\)\)
 perl -i -pe 's/var_F = ASC\(var_Fstr\) \* 256 \+ ASC\(MID\$\(var_Fstr, 2\)\)/var_F = var_Fstr.charCodeAt(0) * 256 + var_Fstr.charCodeAt(2-1)/gm' output.js
 perl -i -pe 's/MID\$\((.*?),(.*?)\)/\1.substr(\2-1)/gm' output.js
 perl -i -pe 's/ASC\((.*?)\)/\1.charCodeAt(0)/gm' output.js
-perl -i -pe 's/if\ \(\!\(var_ST\)\)/if(false)/gm' output.js
+perl -i -pe 's/if\ \(\!\(var_ST\)\)/copy_extra_data(); if(false)/gm' output.js
 perl -i -pe 's/var_Z \= var_F6/var_Jstr = String.fromCharCode(168) + float2string(var_F6); return/gm' output.js
 perl -i -pe 's/for \(var_F = 2047\; var_F \<\= var_T1int\; var_F\+\+\) \{/var_F=var_T1int+1; if(false) \{/gm' output.js
 
@@ -79,4 +79,5 @@ run_test monopoly
 run_test commtown
 run_test oversized
 run_test sysq
+run_test trailing
 echo "*** Tests passed"
