@@ -63,9 +63,9 @@ perl -i -pe 's/var_G1 = var_H1 \* 2 \+ 7/var_G1 = var_H1 \* 2 \+ 7; total_array_
 perl -i -pe 's/var_Cintarr = new Int16Array/var_Cintarr = new Int32Array/gm' output.js
 perl -i -pe 's/var_Bintarr = new Int16Array/var_Bintarr = new Int32Array/gm' output.js
 
-echo 'let runtime = new Uint8Array([' >> output.js
+echo -e '\n\nlet runtime = new Uint8Array([' >> output.js
 dd if=0_blitz_orig.prg bs=1 count=6036 | ./hex >> output.js
-echo '])' >> output.js
+echo -e '])\n\n' >> output.js
 cat helpers.js >> output.js
 mv output.js reblitz64.js
 

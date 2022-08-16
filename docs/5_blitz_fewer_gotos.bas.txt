@@ -244,7 +244,8 @@
  1880 if(j%andc3%)orc2%goto1890:rem"do,break
  1881 ifc%=34thenj%=1-j%
  1885 i$=i$+chr$(c%):sysm%+3:goto1880:rem"while(true)
- 1890 i$=i$+chr$(58):return
+ 1890 ifc2%andj%=0theni$=i$+chr$(34)
+ 1891 i$=i$+chr$(58):return
 
  1910 e$=chr$(j%):f5=0:sysm%:ifc3%goto1955:rem"else
  1915 gosub2270:ifl2%=0thener%=2:return
