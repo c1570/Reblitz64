@@ -1,3 +1,4 @@
+let forced_integer_variables = new Set()
 let pass1_result = ''
 let data_values = ''
 let data_index = 0
@@ -1759,11 +1760,13 @@ function sub_2645() {
             break
         }
         if (!(var_Cint > 64 && var_Cint < 91 || var_Cint > 47 && var_Cint < 58)) {
-            if (var_Cint == 37) {
+            let var_name = String.fromCharCode(var_F1int)
+            if(var_F2int != 0) var_name = var_name + String.fromCharCode(var_F2int)
+            if (var_Cint == 37 || forced_integer_variables.has(var_name)) {
                 var_L3int = 128
                 var_F1int = Math.floor(var_F1int | 128)
                 var_F2int = Math.floor(var_F2int | 128)
-                sys_chrget() 
+                if (var_Cint == 37) sys_chrget()
             }
             break
         }
@@ -3052,7 +3055,11 @@ if(typeof document !== 'undefined') {
 } else {
   const fs = require('fs')
   input_prg = fs.readFileSync(process.argv[2], null)
+  if(process.argv.length > 4) {
+    forced_integer_variables = new Set(process.argv[4].split(",").map(x => x.trim().toUpperCase()))
+  }
   console.log(`Reading file ${process.argv[2]}, length ${input_prg.length}`)
+  console.log(`Integer variables: [${Array.from(forced_integer_variables).join(",")}]`)
   c64_print = console.log
   let start = performance.now()
   main()

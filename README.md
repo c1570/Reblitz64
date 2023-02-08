@@ -3,18 +3,19 @@ https://github.com/c1570/Reblitz64
 
 A port of the [Blitz!/Austro-Speed](https://csdb.dk/release/?id=72927) C64 BASIC V2 compiler to JavaScript.
 
-Simple live page (running in your browser): [docs/reblitz64.html](https://c1570.github.io/Reblitz64/reblitz64.html)
+Simple live page (running in your browser): **[docs/reblitz64.html](https://c1570.github.io/Reblitz64/reblitz64.html)**
 
-You can run the compiler on command line using `node reblitz64.js source.prg target.prg`.
+You can run the compiler on command line using `node reblitz64.js source.prg target.prg i,j,x,y`.
+The last parameter is optional and represents a set of BASIC V2 variables that the compiler is supposed to treat as integer variables (-32768..32767) without requiring the `%` suffix.
 
 ## Rationale
 The original Blitz! compiler was written in BASIC (with a few assembler helpers for improved performance) and got compiled using itself.
 
 Porting that compiler using a 6502 emulator (see [blitz 0.1](https://csdb.dk/release/?id=173267)) or emulating the BASIC line structure using a `switch()` based finite state machine is relatively straightforward but does not result in maintainable/readable code.
 
-Instead, the approach taken here was i) rewriting the original BASIC code to use structured GOTOs only (i.e., GOTOs that form proper IF/THEN/ELSE and loop block structures), ii) creating a transpiler that generates somewhat well-formed JavaScript code (without any GOTOs) from that input.
+Instead, the approach taken here was i) rewriting the original BASIC code to use structured GOTOs only (i.e., GOTOs that form proper IF/THEN/ELSE and loop block structures), ii) creating a transpiler that generates JavaScript code (without any GOTOs) from that input.
 
-This resulted in a somewhat readable and hackable result, and it's much faster than the emulation approach as well.
+The result is JavaScript code that is more readable and hackable than the results of the other approaches, and it's much faster than the emulation approach as well.
 
 ### Benchmarks
 Compiling a [36 Kbytes PRG](tests/test-gq6.prg).
@@ -24,7 +25,7 @@ Compiling a [36 Kbytes PRG](tests/test-gq6.prg).
 * Reblitz64: about 0.18 seconds
 
 ## basictransplr
-A somewhat generic BASIC V2 transpiler can be found at [docs/basictransplr](docs/basictransplr).
+An incomplete BASIC V2 transpiler can be found at [docs/basictransplr](docs/basictransplr).
 This was used to do the major work of porting the Blitz! compiler to JavaScript.
 
 Just as the name implies, basictransplr isn't actually a transpiler but more of a slightly extended BASIC detokenizer.
@@ -58,7 +59,7 @@ do {
   } else {
     console.log("i is greater or equal to 3")
   }
-while(true)
+} while(true)
 if(!(i>10)) {
   console.log("this should not be reached")
 }
@@ -95,13 +96,9 @@ For the JavaScript output, the original ASM helpers get replaced by custom JavaS
 [docs/hack.sh](docs/hack.sh) builds the JavaScript version of the compiler and contains a lot of regex nastiness to make it all work.
 
 ## Fixes and changes in Reblitz64
+* Added: Feature to force integer handling of variables not declared as int (`%`)
 * Fixed: Pass 2 failed in case the generated P-code reached beyond $7FFF (overflow in `15139 l2%=c%(c5%)+c%:return`)
 * Fixed: Spaces in SYS parameters were not supported.
 * Fixed: (TODO typo in variable)
 * Fixed: (TODO broken comparison/variable count)
 * Removed: The `::` mechanism to pass any code to the original BASIC interpreter got removed.
-
-## Notes
-* Want to force Blitz! to recognize one variable as integer (even though it isn't marked as such)?
-  * 2680 iff1%=...andf2%=...thenl3%=128:f1%=f1%or128:f2%=f2%or128
-  * 2681 f=f1%*256+f2%:...

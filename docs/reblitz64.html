@@ -4,6 +4,8 @@
 <a href="https://github.com/c1570/Reblitz64">github.com/c1570/Reblitz64</a>
 <script src="reblitz64.js"></script>
 <form name="form_input" enctype="multipart/form-data">
+<label for="integer_vars">Treat these variables as integer (speedup)</label>
+<input type="text" name="integer_vars" id="integer_vars" placeholder="I,X,Y" /><br/>
 <input type="file" name="prg_file" id="prg_file" />
 <button type="button" onclick="compile()">Compile PRG</button>
 </form>
@@ -12,6 +14,7 @@
 <script>
 function compile() {
   let files = document.getElementById("prg_file").files
+  forced_integer_variables = new Set(document.getElementById("integer_vars").value.split(",").map(x => x.trim().toUpperCase()))
   for(let file of files) {
     let reader = new FileReader();
     reader.onload = (the_file => {
