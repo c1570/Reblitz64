@@ -7,7 +7,7 @@
 <label for="integer_vars">Treat these variables as integer (speedup)</label>
 <input type="text" name="integer_vars" id="integer_vars" placeholder="I,X,Y" /><br/>
 <input type="file" name="prg_file" id="prg_file" />
-<button type="button" onclick="compile()">Compile PRG</button>
+<button type="button" id="cmp_btn" onclick="compile()">Compile PRG</button>
 </form>
 <div id="scr_output">
 </div>
@@ -34,6 +34,9 @@ function compile() {
         document.body.appendChild(element)
         element.click()
         document.body.removeChild(element)
+        document.getElementById("prg_file").disabled = true
+        document.getElementById("cmp_btn").textContent = "Reload page"
+        document.getElementById("cmp_btn").onclick = () => location.reload()
       }
     })(file)
     reader.readAsArrayBuffer(file)
